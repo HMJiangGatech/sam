@@ -6,6 +6,75 @@
 # Version: 1.0.3                                                    	#
 #-----------------------------------------------------------------------#
 
+#' Training function of Sparse Additive Possion Regression
+#'
+#' The log-linear model is learned using training data.
+#' 
+#' We adopt various computational algorithms including the block coordinate descent, fast iterative soft-thresholding algorithm, and newton method. The computation is further accelerated by "warm-start" and "active-set" tricks.
+#'
+#' @param X The \code{n} by \code{d} design matrix of the training set, where \code{n} is sample size and \code{d} is dimension.
+#' @param y The \code{n}-dimensional response vector of the training set, where \code{n} is sample size. Responses must be non-negative integers.
+#' @param p The number of baisis spline functions. The default value is 3.
+#' @param lambda A user supplied lambda sequence. Typical usage is to have the program compute its own lambda sequence based on nlambda and lambda.min.ratio. Supplying a value of lambda overrides this. WARNING: use with care. Do not supply a single value for lambda. Supply instead a decreasing sequence of lambda values. samEL relies on its warms starts for speed, and its often faster to fit a whole path than compute a single fit.
+#' @param nlambda The number of lambda values. The default value is 20.
+#' @param lambda.min.ratio Smallest value for lambda, as a fraction of lambda.max, the (data derived) entry value (i.e. the smallest value for which all coefficients are zero). The default is 0.1.
+#' @param thol Stopping precision. The default value is 1e-5.
+#' @param max.ite The number of maximum iterations. The default value is 1e5.
+#' @return
+#' \item{p}{
+#'   The number of baisis spline functions used in training.  
+#' }
+#' \item{X.min}{
+#'   A vector with each entry corresponding to the minimum of each input variable. (Used for rescaling in testing)
+#' }
+#' \item{X.ran}{
+#'   A vector with each entry corresponding to the range of each input variable. (Used for rescaling in testing)
+#' }
+#' \item{lambda}{
+#'   A sequence of regularization parameter used in training.
+#' }
+#' \item{w}{
+#'   The solution path matrix (\code{d*p+1} by length of \code{lambda}) with each column corresponding to a regularization parameter. Since we use the basis expansion with the intercept, the length of each column is \code{d*p+1}.
+#' }
+#' \item{df}{
+#'   The degree of freedom of the solution path (The number of non-zero component function)
+#' }
+#' \item{knots}{
+#'   The \code{p-1} by \code{d} matrix. Each column contains the knots applied to the corresponding variable.
+#' }
+#' \item{Boundary.knots}{
+#'   The \code{2} by \code{d} matrix. Each column contains the boundary points applied to the corresponding variable.
+#' }
+#' \item{func_norm}{
+#'   The functional norm matrix (\code{d} by length of \code{lambda}) with each column corresponds to a regularization parameter. Since we have \code{d} input variabls, the length of each column is \code{d}.
+#' }
+#' @seealso \code{\link{SAM}},\code{\link{plot.samEL},\link{print.samEL},\link{predict.samEL}}
+#' @examples 
+#' 
+#' ## generating training data
+#' n = 200
+#' d = 100
+#' X = 0.5*matrix(runif(n*d),n,d) + matrix(rep(0.5*runif(n),d),n,d)
+#' u = exp(-2*sin(X[,1]) + X[,2]^2-1/3 + X[,3]-1/2 + exp(-X[,4])+exp(-1)-1+1)
+#' y = rep(0,n)
+#' for(i in 1:n) y[i] = rpois(1,u[i])
+#' 
+#' ## Training
+#' out.trn = samEL(X,y)
+#' out.trn
+#' 
+#' ## plotting solution path
+#' plot(out.trn)
+#' 
+#' ## generating testing data
+#' nt = 1000
+#' Xt = 0.5*matrix(runif(nt*d),nt,d) + matrix(rep(0.5*runif(nt),d),nt,d)
+#' ut = exp(-2*sin(Xt[,1]) + Xt[,2]^2-1/3 + Xt[,3]-1/2 + exp(-Xt[,4])+exp(-1)-1+1)
+#' yt = rep(0,nt)
+#' for(i in 1:nt) yt[i] = rpois(1,ut[i])
+#' 
+#' ## predicting response
+#' out.tst = predict(out.trn,Xt)
 samEL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 0.25, thol=1e-5, max.ite = 1e5){
 	
 	gcinfo(FALSE)
@@ -83,16 +152,48 @@ samEL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 0.
 	return(fit)		
 }
 
+#' Printing function for S3 class \code{"samEL"}
+#'
+#' Summarize the information of the object with S3 class \code{samEL}.
+#' 
+#' The output includes length and d.f. of the regularization path.
+#'
+#' @param x An object with S3 class \code{"samEL"} 
+#' @param \dots System reserved (No specific usage)
+#' @seealso \code{\link{samEL}}
 print.samEL = function(x,...){
 	cat("Path length:",length(x$df),"\n")
 	cat("d.f.:",x$df[1],"--->",x$df[length(x$df)],"\n")
 }
 
+#' Plot function for S3 class \code{"samEL"}
+#'
+#' This function plots the regularization path (regularization parameter versus functional norm)
+#' 
+#' The horizontal axis is for the regularization parameters in log scale. The vertical axis is for the functional norm of each component.
+#'
+#' @param x An object with S3 class \code{"samEL"} 
+#' @param \dots System reserved (No specific usage)
+#' @seealso \code{\link{samEL}}
 plot.samEL = function(x,...){
 	par = par(omi = c(0.0, 0.0, 0, 0), mai = c(1, 1, 0.1, 0.1))
 	matplot(x$lambda[length(x$lambda):1],t(x$func_norm),type="l",xlab="Regularization Parameters",ylab = "Funcional Norms",cex.lab=2,log="x",lwd=2)
 }
 
+#' Prediction function for S3 class \code{"samEL"}
+#'
+#' Predict the labels for testing data.
+#' 
+#' The testing dataset is rescale to the samELe range, and expanded by the samELe spline basis funcions as the training data.
+#'
+#' @param object An object with S3 class \code{"samEL"}.
+#' @param newdata The testing dataset represented in a \code{n} by \code{d} matrix, where \code{n} is testing sample size and \code{d} is dimension.
+#' @param \dots System reserved (No specific usage)
+#' @return
+#'   \item{expectations}{
+#'     Estimated expected counts also represented in a \code{n} by the length of \code{lambda} matrix, where \code{n} is testing sample size. 
+#'   }
+#' @seealso \code{\link{samEL}}
 predict.samEL = function(object, newdata,...){
 	gcinfo(FALSE)
 	out = list()

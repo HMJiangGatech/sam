@@ -1,11 +1,27 @@
-Package: sam
+Package: SAM
 Type: Package
-Title: What the package does (short line)
-Version: 1.0
-Date: 2018-05-21
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
-Imports: Rcpp (>= 0.12.15), RcppEigen (>= 0.3.3.4.0)
-LinkingTo: Rcpp, RcppEigen
+Title: Sparse Additive Modelling
+Version: 1.0.5
+Date: 2014-02-11
+Author: Tuo Zhao, Xingguo Li, Han Liu, and Kathryn Roeder
+Maintainer: Tuo Zhao <tourzhao@gmail.com>
+Depends: R (>= 2.14), splines
+Description: The package SAM targets at high dimensional predictive
+        modeling (regression and classification) for complex data
+        analysis. SAM is short for sparse additive modeling, and adopts
+        the computationally efficient basis spline technique. We solve
+        the optimization problems by various computational algorithms
+        including the block coordinate descent algorithm, fast
+        iterative soft-thresholding algorithm, and newton method. The
+        computation is further accelerated by warm-start and active-set
+        tricks.
+License: GPL-2
+Packaged: 2014-02-12 07:41:52 UTC; tourzhao
+Repository: CRAN
+Date/Publication: 2014-02-12 09:34:38
+NeedsCompilation: yes
+RoxygenNote: 6.0.1
+LinkingTo: 
+    Rcpp
+Imports: 
+    Rcpp

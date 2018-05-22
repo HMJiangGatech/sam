@@ -1,4 +1,4 @@
-# sam
+# SAM
 Sparse Additive Modelling
 
 ## Installation
@@ -8,7 +8,7 @@ Sparse Additive Modelling
 ## GSOC TODO List
 
 ### Code Refactoring and Benchmarking
-- [ ] Use `roxygen2` to manage Documents.
+- [x] Use `roxygen2` to manage Documents.
 - [ ] Benchmark the code.
 - [ ] Use `RcppEigen` to accelerate the code.
 - [ ] Use `OpenMP` to enable multi-processing.
