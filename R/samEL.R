@@ -75,6 +75,7 @@
 #' 
 #' ## predicting response
 #' out.tst = predict(out.trn,Xt)
+#' @export
 samEL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 0.25, thol=1e-5, max.ite = 1e5){
 	
 	gcinfo(FALSE)
@@ -161,6 +162,7 @@ samEL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 0.
 #' @param x An object with S3 class \code{"samEL"} 
 #' @param \dots System reserved (No specific usage)
 #' @seealso \code{\link{samEL}}
+#' @export
 print.samEL = function(x,...){
 	cat("Path length:",length(x$df),"\n")
 	cat("d.f.:",x$df[1],"--->",x$df[length(x$df)],"\n")
@@ -175,6 +177,7 @@ print.samEL = function(x,...){
 #' @param x An object with S3 class \code{"samEL"} 
 #' @param \dots System reserved (No specific usage)
 #' @seealso \code{\link{samEL}}
+#' @export
 plot.samEL = function(x,...){
 	par = par(omi = c(0.0, 0.0, 0, 0), mai = c(1, 1, 0.1, 0.1))
 	matplot(x$lambda[length(x$lambda):1],t(x$func_norm),type="l",xlab="Regularization Parameters",ylab = "Funcional Norms",cex.lab=2,log="x",lwd=2)
@@ -194,6 +197,7 @@ plot.samEL = function(x,...){
 #'     Estimated expected counts also represented in a \code{n} by the length of \code{lambda} matrix, where \code{n} is testing sample size. 
 #'   }
 #' @seealso \code{\link{samEL}}
+#' @export
 predict.samEL = function(object, newdata,...){
 	gcinfo(FALSE)
 	out = list()
