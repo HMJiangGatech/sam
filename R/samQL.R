@@ -131,6 +131,7 @@ samQL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 5e
 			nlambda = 30
 		lambda = exp(seq(log(1),log(lambda.min.ratio),length = nlambda))
 	} else nlambda = length(lambda)
+
 	
 	out = .C("grplasso",y = as.double(y), X = as.double(Z), lambda = as.double(lambda), nnlambda = as.integer(nlambda), nn = as.integer(n), dd = as.integer(d), pp = as.integer(p), ww = as.double(matrix(0,m,nlambda)), mmax_ite = as.integer(max.ite), tthol = as.double(thol),iinput = as.integer(lambda_input), df=as.integer(rep(0,nlambda)), sse=as.double(rep(0,nlambda)), func_norm = as.double(matrix(0,d,nlambda)), package="SAM")
 
@@ -140,6 +141,7 @@ samQL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 5e
 	fit$sse = out$sse
 	fit$func_norm = matrix(out$func_norm,ncol=nlambda)
 	fit$intercept = rep(y.mean,nlambda) - t(Z.mean)%*%fit$w
+	fit$XX = out$X
 
 	rm(out,X,y,Z,X.min.rep,X.ran.rep,Z.mean.rep)
 

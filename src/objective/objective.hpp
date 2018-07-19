@@ -4,8 +4,10 @@
 #include <cmath>
 #include "../eigen3/Eigen/Dense"
 #include <vector>
+#include "../utils.hpp"
 
 #include <ctime>
+#include <iostream>
 
 using Eigen::VectorXd;
 using Eigen::MatrixXd;
@@ -14,14 +16,12 @@ namespace SAM {
 
   class ModelParam {
   public:
-    int p;
     int d;
+    int p;
     vector<VectorXd> beta;
     double intercept;
 
-    ModelParam(int _d, int _p):beta(d) {
-      d = _d;
-      p = _p;
+    ModelParam(int _d, int _p):d(_d), p(_p), beta(_d) {
       for (int i = 0; i < d; i++) {
         beta[i].resize(p);
         beta[i].setZero();
@@ -48,7 +48,15 @@ namespace SAM {
         return 0;
     }
     VectorXd threshold_l1(VectorXd x, double thr) {
-      // TODO
+      double norm = calc_norm(x);
+      if (norm <= thr) {
+        for (int i = 0; i < (int)x.size(); i++)
+          x[i] = 0;
+      } else {
+        double ratio = (norm - thr) / norm;
+        for (int i = 0; i < (int)x.size(); i++)
+          x[i] *= ratio;
+      }
       return x;
     }
   };

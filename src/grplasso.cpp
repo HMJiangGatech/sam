@@ -11,6 +11,8 @@
 #include "eigen3/Eigen/Dense"
 #include "utils.hpp"
 #include "solver/actnewton.hpp"
+#include <iostream>
+#include "omp.h"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -20,6 +22,8 @@ using namespace SAM;
 extern "C" void grplasso(double *yy, double *XX, double *lambda, int *nnlambda, int *nn, int *dd, int *pp, double *ww, int *mmax_ite, double *tthol, int *iinput, int *df, double *sse, double *func_norm)
 {
 
+  int nProcessors=omp_get_max_threads();
+  Eigen::setNbThreads(nProcessors);
   int counter,n,d,p,m,max_ite,nlambda;
   int ite_ext,ite_int;
   int s;
@@ -48,64 +52,73 @@ extern "C" void grplasso(double *yy, double *XX, double *lambda, int *nnlambda, 
 
   for (int i = 0; i < n; i++)
     y(i) = yy[i];
+  
+  
+  
+  //std::cout << y << std::endl << y << std::endl;
 
   for (int i = 0; i < d; i++){
-
     MatrixXd X(n, p);
     for (int j = 0; j < n; j++) {
       for (int k = 0; k < p; k++) {
         X(j,k) = XX[i*n*p + k*n + j];
       }
     }
+    
+    //std::cout << "X:" << std::endl << X << std::endl;
 
     Eigen::JacobiSVD<MatrixXd> svd(X, Eigen::ComputeThinU | Eigen::ComputeThinV);
 
     Eigen::VectorXd S = svd.singularValues();
 
-    Eigen::MatrixXd U = svd.matrixU();
+    X = svd.matrixU();
 
     V[i] = svd.matrixV();
-
-
+    
     for (int j = 0; j < n; j++) {
       for (int k = 0; k < p; k++) {
-        X(j, k) *= S(k);
+        if (i == 0 && j == 0) {
+          printf("X:%f\n", X(j, k));
+        }
         XX[i*n*p + k*n + j] = X(j, k);
       }
     }
 
     if (input == 0) {
-      lambda_max = std::max(lambda_max, calc_norm(X.transpose()*y));
+      lambda_max = std::max(lambda_max, calc_norm(X.transpose()*y)/n);
     }
   }
+  std::cout << "lambda_max: " << lambda_max << std::endl;
 
   if (input == 0) {
     for (int i = 0; i < nlambda; i++)
       lambda[i] = lambda[i] * lambda_max;
   }
 
-  SolverParams param;
-  param.set_lambdas(lambda, nlambda);
-  param.reg_type = L1; // TODO: reg_type
-  param.include_intercept = true;
-  param.prec = thol;
-  param.max_iter = max_ite;
-  param.num_relaxation_round = 3;
+  SolverParams *param = new SolverParams();
+  param->set_lambdas(lambda, nlambda);
+  param->reg_type = L1; // TODO: reg_type
+  param->include_intercept = true;
+  param->prec = thol;
+  param->max_iter = max_ite;
+  param->num_relaxation_round = 3;
 
-  ObjFunction *obj = new LinearRegressionObjective(XX, yy, n, d, p, param.include_intercept);
+  ObjFunction *obj = new LinearRegressionObjective(XX, yy, n, d, p, param->include_intercept);
 
-  ActNewtonSolver solver(obj, param);
+  ActNewtonSolver solver(obj, *param);
 
   vector<vector<VectorXd> > beta_history;
   solver.solve(sse, func_norm, beta_history, df);
 
-  for (int i = 0; i < nlambda; i++) {
+  assert(beta_history.size() == (unsigned int)nlambda);
+  for (int i = 0; i < (int)beta_history.size(); i++) {
     for (int j = 0; j < d; j++) {
-      beta_history[i][j] = beta_history[i][j] * V[j].transpose();
+      beta_history[i][j] = beta_history[i][j] * V[j];
       for (int k = 0; k < p; k++) {
         ww[i*d*p + j*p + k] = beta_history[i][j](k);
       }
     }
   }
 
+  delete param;
 }

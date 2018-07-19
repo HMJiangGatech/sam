@@ -1,17 +1,14 @@
 #include <cassert>
 #include "objective.hpp"
+#include <iostream>
 
 namespace SAM {
-
-  // NOTE: needing some configuration for using STL
-  inline double sqr(double x) {
-    return x * x;
-  }
 
   LinearRegressionObjective::LinearRegressionObjective(const double *xmat, const double *y, int n, int d, int p, bool include_intercept)
     : ObjFunction(d, p), XX(d) {
     this->d = d;
     this->n = n;
+    this->p = p;
     Y.resize(n);
     for (int i = 0; i < d; i++)
       gr[i].resize(p);
@@ -19,12 +16,13 @@ namespace SAM {
     Xb.resize(n);
     Xb.setZero();
 
-    for (int i = 0; i < n; i++) Y[i] = y[i];
+    for (int i = 0; i < n; i++) Y(i) = y[i];
 
     for (int k = 0; k < d; k++) {
       X[k].resize(n, p);
       for (int j = 0; j < p; j++) {
-        for (int i = 0; i < n; i++) X[k](i, j) = xmat[k*p*n+j*n+i];
+        for (int i = 0; i < n; i++)
+          X[k](i, j) = xmat[k*p*n+j*n+i];
       }
     }
 
@@ -35,13 +33,13 @@ namespace SAM {
       model_param.intercept = avr_y;
     }
 
-    r = Y;
-    update_auxiliary();
-
     for (int i = 0; i < d; i++) {
       XX[i].resize(p, p);
       XX[i] = X[i].transpose() * X[i] / n;
     }
+
+    r = Y;
+    update_auxiliary();
 
     // saturated fvalue = 0
     deviance = fabs(eval());
@@ -50,11 +48,12 @@ namespace SAM {
   VectorXd LinearRegressionObjective::coordinate_descent(RegFunction *regfunc,
                                                        int idx) {
     Eigen::MatrixXd beta_old = model_param.beta[idx];
-    Eigen::MatrixXd tmp = X[idx].transpose() * (r + X[idx] * model_param.beta[idx]);
+    Eigen::MatrixXd tmp = X[idx].transpose() * (r + X[idx] * model_param.beta[idx]) / n;
 
-    model_param.beta[idx] = regfunc->threshold(tmp);
+    model_param.beta[idx] = regfunc->threshold(tmp) * n;
 
     r = r - X[idx] * (model_param.beta[idx] - beta_old);
+    // std::cout << calc_norm(model_param.beta[idx]) << ' ';
     return model_param.beta[idx];
   }
 
@@ -97,11 +96,7 @@ namespace SAM {
   }
 
   double LinearRegressionObjective::get_r2() {
-    double res = 0;
-    for (int i = 0; i < n; i++) {
-      res += r(i) * r(i);
-    }
-    return res;
+    return r.dot(r);
   }
 
 

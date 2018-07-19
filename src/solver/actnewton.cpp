@@ -3,6 +3,8 @@
 #include "../objective/objective.hpp"
 #include "../solver/solver_params.hpp"
 #include "../utils.hpp"
+#include <iostream>
+#include <algorithm>
 
 namespace SAM {
   ActNewtonSolver::ActNewtonSolver(ObjFunction *obj, SolverParams param)
@@ -40,6 +42,8 @@ namespace SAM {
       grad_master[i].resize(p);
       grad[i] = m_obj->get_grad(i);
       grad[i] = grad[i].cwiseAbs();
+      if (i < 10)
+        std::cout << i << ' ' << calc_norm(grad[i]) << std::endl;
     }
 
     // model parameters on the master path
@@ -48,6 +52,12 @@ namespace SAM {
     Xb_master = m_obj->get_model_Xb();
 
     for (int i = 0; i < d; i++) grad_master[i] = grad[i];
+
+    double grad_max = 0;
+    for (int i = 0; i < d; i++) {
+      grad_max = std::max(grad_max, calc_norm(grad[i]));
+    }
+    std::cout << "grad_max: " << grad_max << std::endl;
 
     std::vector<double> stage_lambdas(d, 0);
     RegFunction *regfunc = new RegL1();
@@ -73,7 +83,15 @@ namespace SAM {
       for (int j = 0; j < d; ++j) {
         stage_lambdas[j] = lambdas[i];
 
-        if (calc_norm(grad[j]) > threshold) actset_indcat[j] = 1;
+        if (i == 0 && j == 0) {
+          std::cout << grad[j] << std::endl;
+          std::cout << calc_norm(grad[j]) << ' ' << threshold << std::endl;
+        }
+        if (calc_norm(grad[j]) > threshold) {
+          if (i == 0)
+            std::cout << "!!" << j << std::endl;
+          actset_indcat[j] = 1;
+        }
       }
 
       m_obj->update_auxiliary();
@@ -101,9 +119,11 @@ namespace SAM {
             if (actset_indcat[j]) {
               regfunc->set_param(stage_lambdas[j], 0.0);
               updated_coord = m_obj->coordinate_descent(regfunc, j);
-
+              if (i == 0 && loopcnt_level_0 == 1 && loopcnt_level_1 == 1)
+                std::cout << updated_coord << std::endl;
               if (calc_norm(updated_coord) > 0) actset_idx.push_back(j);
             }
+          std::cout << i << ' ' << loopcnt_level_0 << ' ' << loopcnt_level_1 << ' ' << actset_idx.size() << std::endl;
 
           // loop level 2: proximal newton on active set
           int loopcnt_level_2 = 0;
@@ -184,6 +204,20 @@ namespace SAM {
           }
 
           for (int j = 0; j < n; j++) Xb_master[j] = Xb_master_ref[j];
+
+          //update funcnorm, sse, ww, df
+          vector<VectorXd> cur_beta(d, VectorXd::Zero(p));
+          df[i] = 0;
+          for (auto j : actset_idx) {
+            func_norm[i*d+j] = calc_norm(m_obj->get_model_coef(j));
+            cur_beta[j] = m_obj->get_model_coef(j);
+            df[i]++;
+          }
+          beta_history.push_back(cur_beta);
+
+          sse[i] += m_obj->get_r2();
+
+
         }
 
         if (m_param.reg_type == L1) break;
@@ -215,21 +249,7 @@ namespace SAM {
       solution_path.push_back(m_obj->get_model_param());
 
 
-      //update funcnorm, sse, ww, df
-      for (int j = 0; j < (int)actset_idx.size(); j++) {
-        func_norm[i*d+actset_idx[j]] = calc_norm(m_obj->get_model_coef(actset_idx[j]));
-      }
 
-      sse[i] += m_obj->get_r2();
-
-      vector<VectorXd> cur_beta(d, VectorXd::Zero(p));
-      for (int j = 0; j < (int)actset_idx.size(); j++) {
-        int jj = actset_idx[j];
-        cur_beta[jj] = m_obj->get_model_coef(jj);
-      }
-      beta_history.push_back(cur_beta);
-
-      df[i] = actset_idx.size();
     }
 
     delete regfunc;
