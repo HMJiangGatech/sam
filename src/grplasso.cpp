@@ -5,12 +5,12 @@
 #include "math.h"
 #include "R_ext/BLAS.h"
 #include "R_ext/Lapack.h"
-#include "solver/actgd.hpp"
 #include <vector>
 #include "eigen3/Eigen/SVD"
 #include "eigen3/Eigen/Dense"
 #include "utils.hpp"
 #include "solver/actnewton.hpp"
+#include "objective/LinearObjective.hpp"
 #include <iostream>
 #include "omp.h"
 
@@ -19,7 +19,7 @@ using Eigen::VectorXd;
 
 using namespace SAM;
 
-extern "C" void grplasso(double *yy, double *XX, double *lambda, int *nnlambda, int *nn, int *dd, int *pp, double *ww, int *mmax_ite, double *tthol, int *iinput, int *df, double *sse, double *func_norm)
+extern "C" void grplasso(double *yy, double *XX, double *lambda, int *nnlambda, int *nn, int *dd, int *pp, double *ww, int *mmax_ite, double *tthol, char** regfunc, int *iinput, int *df, double *sse, double *func_norm)
 {
 
   int nProcessors=omp_get_max_threads();
@@ -29,12 +29,8 @@ extern "C" void grplasso(double *yy, double *XX, double *lambda, int *nnlambda, 
   int s;
   int input;
 
-  int gap_ext,change_ext,back;
-  double ilambda,thol,gap_int,gap_tmp0,gap_tmp1;
-  double lambda_max,ols_norm;
-  double w_norm;
-  double *aw_norm;
-  double *ols;
+  double ilambda,thol;
+  double lambda_max;
 
   nlambda = *nnlambda;
   n = *nn;
@@ -52,19 +48,17 @@ extern "C" void grplasso(double *yy, double *XX, double *lambda, int *nnlambda, 
 
   for (int i = 0; i < n; i++)
     y(i) = yy[i];
-  
-  
-  
-  //std::cout << y << std::endl << y << std::endl;
+
 
   for (int i = 0; i < d; i++){
+
     MatrixXd X(n, p);
     for (int j = 0; j < n; j++) {
       for (int k = 0; k < p; k++) {
         X(j,k) = XX[i*n*p + k*n + j];
       }
     }
-    
+
     //std::cout << "X:" << std::endl << X << std::endl;
 
     Eigen::JacobiSVD<MatrixXd> svd(X, Eigen::ComputeThinU | Eigen::ComputeThinV);
@@ -74,12 +68,12 @@ extern "C" void grplasso(double *yy, double *XX, double *lambda, int *nnlambda, 
     X = svd.matrixU();
 
     V[i] = svd.matrixV();
-    
+    for (int j = 0; j < p; j++)
+      for (int k = 0; k < p; k++)
+        V[i](j,k) /= S[k];
+
     for (int j = 0; j < n; j++) {
       for (int k = 0; k < p; k++) {
-        if (i == 0 && j == 0) {
-          printf("X:%f\n", X(j, k));
-        }
         XX[i*n*p + k*n + j] = X(j, k);
       }
     }
@@ -88,7 +82,6 @@ extern "C" void grplasso(double *yy, double *XX, double *lambda, int *nnlambda, 
       lambda_max = std::max(lambda_max, calc_norm(X.transpose()*y)/n);
     }
   }
-  std::cout << "lambda_max: " << lambda_max << std::endl;
 
   if (input == 0) {
     for (int i = 0; i < nlambda; i++)
@@ -97,25 +90,42 @@ extern "C" void grplasso(double *yy, double *XX, double *lambda, int *nnlambda, 
 
   SolverParams *param = new SolverParams();
   param->set_lambdas(lambda, nlambda);
-  param->reg_type = L1; // TODO: reg_type
+  param->gamma = 3;
+  if (strcmp(*regfunc, "MCP") == 0) {
+    param->reg_type = MCP;
+  } else if (strcmp(*regfunc, "SCAD") == 0) {
+    param->reg_type = SCAD;
+  } else {
+    param->reg_type = L1;
+  }
   param->include_intercept = true;
   param->prec = thol;
   param->max_iter = max_ite;
-  param->num_relaxation_round = 3;
+  param->num_relaxation_round = 10;
 
-  ObjFunction *obj = new LinearRegressionObjective(XX, yy, n, d, p, param->include_intercept);
+  ObjFunction *obj = new LinearObjective(XX, yy, n, d, p, param->include_intercept);
 
   ActNewtonSolver solver(obj, *param);
 
   vector<vector<VectorXd> > beta_history;
-  solver.solve(sse, func_norm, beta_history, df);
+  solver.solve(sse, df);
 
   assert(beta_history.size() == (unsigned int)nlambda);
-  for (int i = 0; i < (int)beta_history.size(); i++) {
+
+  //update funcnorm, sse, ww, df
+  vector<VectorXd> cur_beta(d, VectorXd::Zero(p));
+
+  assert(solver.solution_path.size() == (unsigned int)nlambda);
+
+  for (int i = 0; i < nlambda; i++) {
+
+    ModelParam &model = solver.solution_path[i];
+
     for (int j = 0; j < d; j++) {
-      beta_history[i][j] = beta_history[i][j] * V[j];
+      func_norm[i*d+j] = calc_norm(model.beta[j]);
+      VectorXd res = V[j] * model.beta[j];
       for (int k = 0; k < p; k++) {
-        ww[i*d*p + j*p + k] = beta_history[i][j](k);
+        ww[i*d*p + j*p + k] = res(k);
       }
     }
   }

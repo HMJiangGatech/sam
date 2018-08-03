@@ -76,7 +76,7 @@
 #' ## predicting response
 #' out.tst = predict(out.trn,Xt)
 #' @export
-samEL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 0.25, thol=1e-5, max.ite = 1e5){
+samEL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 0.25, thol=1e-5, regfunc="L1", max.ite = 1e5){
 	
 	gcinfo(FALSE)
 	fit = list()
@@ -140,7 +140,7 @@ samEL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 0.
 		lambda = exp(seq(log(1),log(lambda.min.ratio),length=nlambda))*lambda_max
 	} else nlambda = length(lambda)
 	
-	out = .C("grpPR", A = as.double(Z), lambda = as.double(lambda), nlambda = as.integer(nlambda), LL0 = as.double(L0), nn = as.integer(n), dd = as.integer(d), pp = as.integer(p), xx = as.double(matrix(0,m+1,nlambda)), aa0 = as.double(a0), mmax_ite = as.integer(max.ite), tthol = as.double(thol), aalpha = as.double(0.5), z = as.double(z),df = as.integer(rep(0,nlambda)),func_norm = as.double(matrix(0,d,nlambda)), package="SAM")
+	out = .C("grpPR", A = as.double(Z), y = as.double(y), lambda = as.double(lambda), nlambda = as.integer(nlambda), LL0 = as.double(L0), nn = as.integer(n), dd = as.integer(d), pp = as.integer(p), xx = as.double(matrix(0,m+1,nlambda)), aa0 = as.double(a0), mmax_ite = as.integer(max.ite), tthol = as.double(thol), regfunc = as.character(regfunc), aalpha = as.double(0.5), z = as.double(z),df = as.integer(rep(0,nlambda)),func_norm = as.double(matrix(0,d,nlambda)), package="SAM")
 
 	fit$lambda = out$lambda
 	fit$w = matrix(out$xx,ncol=nlambda)

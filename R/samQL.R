@@ -20,6 +20,7 @@
 #' @param lambda.min.ratio Smallest value for lambda, as a fraction of lambda.max, the (data derived) entry value (i.e. the smallest value for which all coefficients are zero). The default is 5e-3.
 #' @param thol Stopping precision. The default value is 1e-5.
 #' @param max.ite The number of maximum iterations. The default value is 1e5.
+#' @param regfunc A string indicating the regularizer. The default value is "L1". You can also assign "MCP" or "SCAD" to it.
 #' @return
 #' \item{p}{
 #'   The number of baisis spline functions used in training.  
@@ -51,8 +52,8 @@
 #' \item{func_norm}{
 #'   The functional norm matrix (\code{d} by length of \code{lambda}) with each column corresponds to a regularization parameter. Since we have \code{d} input variabls, the length of each column is \code{d}.
 #' }
-#'   \item{sse}{
-#' Sums of square errors of the solution path.
+#' \item{sse}{
+#'   Sums of square errors of the solution path.
 #' }
 #' @seealso \code{\link{SAM}},\code{\link{plot.samQL},\link{print.samQL},\link{predict.samQL}}
 #' @examples 
@@ -81,7 +82,7 @@
 #' ## predicting response
 #' out.tst = predict(out.trn,Xt)
 #' @export
-samQL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 5e-3, thol=1e-5, max.ite = 1e5){
+samQL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 5e-3, thol=1e-5, max.ite = 1e5, regfunc="L1"){
 	
 	gcinfo(FALSE)
 	fit = list()
@@ -133,7 +134,7 @@ samQL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 5e
 	} else nlambda = length(lambda)
 
 	
-	out = .C("grplasso",y = as.double(y), X = as.double(Z), lambda = as.double(lambda), nnlambda = as.integer(nlambda), nn = as.integer(n), dd = as.integer(d), pp = as.integer(p), ww = as.double(matrix(0,m,nlambda)), mmax_ite = as.integer(max.ite), tthol = as.double(thol),iinput = as.integer(lambda_input), df=as.integer(rep(0,nlambda)), sse=as.double(rep(0,nlambda)), func_norm = as.double(matrix(0,d,nlambda)), package="SAM")
+	out = .C("grplasso",y = as.double(y), X = as.double(Z), lambda = as.double(lambda), nnlambda = as.integer(nlambda), nn = as.integer(n), dd = as.integer(d), pp = as.integer(p), ww = as.double(matrix(0,m,nlambda)), mmax_ite = as.integer(max.ite), tthol = as.double(thol), regfunc = as.character(regfunc), iinput = as.integer(lambda_input), df=as.integer(rep(0,nlambda)), sse=as.double(rep(0,nlambda)), func_norm = as.double(matrix(0,d,nlambda)), package="SAM")
 
 	fit$lambda = out$lambda
 	fit$w = matrix(out$w,ncol=nlambda)

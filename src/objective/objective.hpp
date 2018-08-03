@@ -33,7 +33,8 @@ namespace SAM {
   class RegFunction {
   public:
     virtual double threshold(double x) = 0;
-    virtual VectorXd threshold(VectorXd x) = 0;
+    virtual VectorXd threshold(const VectorXd& x) = 0;
+    virtual VectorXd threshold_p(const VectorXd &x, double a) = 0;
     virtual void set_param(double lambda, double gamma) = 0;
     virtual double get_lambda() = 0;
 
@@ -49,6 +50,10 @@ namespace SAM {
     }
     VectorXd threshold_l1(VectorXd x, double thr) {
       double norm = calc_norm(x);
+      static int dbg_counter = 0;
+      if (dbg_counter++ < 10) {
+        printf("%f %f\n", calc_norm(x), thr);
+      }
       if (norm <= thr) {
         for (int i = 0; i < (int)x.size(); i++)
           x[i] = 0;
@@ -70,8 +75,11 @@ namespace SAM {
     void set_param(double lambda, double gamma) { m_lambda = lambda; m_gamma = gamma;}
     double get_lambda() { return m_lambda; };
     double threshold(double x) { return threshold_l1(x, m_lambda); }
-    VectorXd threshold(VectorXd x) {
+    VectorXd threshold(const VectorXd &x) {
       return threshold_l1(x, m_lambda);
+    }
+    VectorXd threshold_p(const VectorXd &x, double a) {
+      return threshold_l1(x, m_lambda/a);
     }
   };
 
@@ -145,7 +153,20 @@ namespace SAM {
     double deviance;
 
   public:
-    ObjFunction(int d, int p) : d(d), p(p), m(d*p), X(d), gr(d), model_param(d, p) {}
+    ObjFunction(const double *xmat, const double *y, int n, int d, int p) : n(n), d(d), p(p), m(d*p), X(d), Y(n), gr(d), Xb(n), model_param(d, p) {
+
+      for (int i = 0; i < d; i++)
+        gr[i].resize(p);
+      Xb.setZero();
+      for (int i = 0; i < n; i++) Y(i) = y[i];
+      for (int k = 0; k < d; k++) {
+        X[k].resize(n, p);
+        for (int j = 0; j < p; j++) {
+          for (int i = 0; i < n; i++)
+            X[k](i, j) = xmat[k*p*n+j*n+i];
+        }
+      }
+    }
     int get_dim() {
       return d;
     }
@@ -214,7 +235,7 @@ namespace SAM {
     virtual void update_gradient(int idx) = 0;
 
     // compute quadratic change of fvalue on the idx dimension
-    virtual double get_local_change(VectorXd old, int idx) = 0;
+    virtual double get_local_change(const VectorXd& old, int idx) = 0;
     virtual double get_local_change_intercept(double old) = 0;
 
     // unpenalized function value
@@ -224,27 +245,6 @@ namespace SAM {
     virtual double get_r2() = 0;
   };
 
-  class LinearRegressionObjective : public ObjFunction {
-  private:
-    VectorXd r;
-    vector<MatrixXd> XX;
-
-  public:
-    LinearRegressionObjective(const double *xmat, const double *y, int n, int d, int p, bool include_intercept);
-    VectorXd coordinate_descent(RegFunction *regfunc, int idx);
-
-    void intercept_update();
-    void update_auxiliary();
-    void update_gradient(int idx);
-
-    double get_local_change(VectorXd old, int idx);
-    double get_local_change_intercept(double old);
-
-    double eval();
-    double get_r2();
-
-
-  };
 
 }  // namespace picasso
 
