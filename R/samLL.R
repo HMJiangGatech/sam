@@ -232,8 +232,8 @@ predict.samLL = function(object, newdata, thol = 0.5 ,...){
 	}
 		
 	out$probs = exp(cbind(Zt,rep(1,nt))%*%object$w)
-	out$probs = out$prob/(1+out$prob)
-	out$labels = sign(out$values>thol)
+	out$probs = out$probs/(1+out$probs)
+	out$labels = sign(out$probs>thol)
 	
 	rm(Zt,newdata)
 	

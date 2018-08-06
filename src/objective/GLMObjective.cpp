@@ -22,53 +22,70 @@ namespace SAM {
     ArrayXd Xb_p = Xb + X[idx] * deltaBeta;
     ArrayXd P_p = -(Xb_p + model_param.intercept);
     P_p = P_p.exp();
-    P_p = 1 / (P_p + 1.0);
+    P_p = (P_p + 1.0).inverse();
 
     double v = -Y.dot((Xb_p + model_param.intercept).matrix());
 
     for (int i = 0; i < n; i++)
       if (P_p[i] > 1e-8) v -= (log(P_p[i]) - model_param.intercept - Xb_p[i]);
 
-    return v;
+    return v/n;
   }
 
   VectorXd GLMObjective::coordinate_descent(RegFunction *regfunc, int idx) {
 
-    double step_size = step_size0;
+    double step_size = step_size0/10;
 
     VectorXd tmp;
     double loss0 = calc_loss(idx, VectorXd(p));
-    while (step_size > eps) {
-      tmp = model_param.beta[idx] - gr[idx] / step_size;
+    while (false and step_size > eps) {
+      tmp = regfunc->threshold_p((model_param.beta[idx] - gr[idx] / step_size), step_size);
       VectorXd delta_beta = tmp - model_param.beta[idx];
-      if (gr[idx].dot(delta_beta) + 0.5*step_size*(delta_beta).dot(delta_beta)+loss0 <= calc_loss(idx, delta_beta)) {
-        step_size *= 0.5;
+      if (gr[idx].dot(delta_beta) + 0.5*step_size*(delta_beta).dot(delta_beta)+loss0 >= calc_loss(idx, delta_beta)) {
+        step_size /= 2;
       } else {
         // if (dbg_counter++ < 10) {
         //   printf("%f %f\n", gr[idx].dot(delta_beta) + 0.5*step_size*(delta_beta).dot(delta_beta)+loss0, calc_loss(idx, delta_beta));
         //   printf("tmp:\n");
         //   std::cout << tmp << std::endl;
         // }
-        step_size /= 0.5;
+        step_size *= 2;
         break;
       }
     }
-
+    
+    tmp = regfunc->threshold_p((model_param.beta[idx] - gr[idx] / step_size), step_size);
     VectorXd delta_beta = tmp - model_param.beta[idx];
-    printf("step_size:%f %f %f\n", step_size, gr[idx].dot(delta_beta) + 0.5*step_size*(delta_beta).dot(delta_beta)+loss0, calc_loss(idx, tmp-model_param.beta[idx]));
-
-    tmp = (model_param.beta[idx] - gr[idx] / step_size) / n;
+    static int dbg_counter2 = 0;
+    if (dbg_counter2 < 200)
+      printf("step_size:%f %.20f %.20f %f %f %f\n", step_size, 
+             gr[idx].dot(delta_beta)+ 0.5*step_size*(delta_beta).dot(delta_beta),
+             calc_loss(idx, tmp-model_param.beta[idx])-loss0,
+               calc_norm(delta_beta), calc_norm(gr[idx]), regfunc->get_lambda());
+    tmp = (model_param.beta[idx] - gr[idx] / step_size) ;
     VectorXd old_beta = model_param.beta[idx];
-    model_param.beta[idx] = regfunc->threshold_p(tmp, step_size) * n;
+    model_param.beta[idx] = regfunc->threshold_p(tmp, step_size);
     // printf("%f %f %f %f\n", calc_norm(model_param.beta[idx]), calc_norm(gr[idx]), calc_norm(tmp), calc_norm(old_beta));
 
     delta_beta = model_param.beta[idx] - old_beta;
+    
+    double e1, e2;
+    if (dbg_counter2 < 200) {
+      update_auxiliary();
+      e1 = eval();
+    }
     if (calc_norm(tmp) > 1e-8) {
       // Xb += delta*X[idx*n]
       Xb += X[idx] * delta_beta;
 
       // r -= delta*w*X
-      R = R - W.cwiseProduct(X[idx] * delta_beta);
+      if (dbg_counter2 >= 200)
+        R = R - W.cwiseProduct(X[idx] * delta_beta);
+    }    
+    if (dbg_counter2++ < 200) {
+      update_auxiliary();
+      e2 = eval();
+      printf("eval:%.20f\n", e2-e1);
     }
     return model_param.beta[idx];
   }

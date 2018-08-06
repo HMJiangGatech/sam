@@ -68,8 +68,8 @@ namespace SAM {
 
   class RegL1 : public RegFunction {
   private:
-    double m_lambda;
     double m_gamma;
+    double m_lambda;
 
   public:
     void set_param(double lambda, double gamma) { m_lambda = lambda; m_gamma = gamma;}

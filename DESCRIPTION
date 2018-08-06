@@ -20,7 +20,7 @@ Packaged: 2014-02-12 07:41:52 UTC; tourzhao
 Repository: CRAN
 Date/Publication: 2014-02-12 09:34:38
 NeedsCompilation: yes
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
 LinkingTo: 
     Rcpp
 Imports: 
