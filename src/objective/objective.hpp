@@ -59,6 +59,7 @@ namespace SAM {
           x[i] = 0;
       } else {
         double ratio = (norm - thr) / norm;
+        assert(ratio > 0);
         for (int i = 0; i < (int)x.size(); i++)
           x[i] *= ratio;
       }

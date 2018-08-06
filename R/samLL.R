@@ -81,7 +81,7 @@
 #' ## predicting response
 #' out.tst = predict(out.trn,Xt)
 #' @export
-samLL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 0.1, thol=1e-5, regfunc="L1", max.ite = 1e5){
+samLL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 0.1, thol=1e-5, regfunc="L1", max.ite = 1e2){
 	
 	gcinfo(FALSE)
 	fit = list()

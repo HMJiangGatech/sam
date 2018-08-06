@@ -16,6 +16,7 @@ namespace SAM {
 
 
   void ActNewtonSolver::solve(double *sse, int *df) {
+    double err0 = m_obj->eval();
     int d = m_obj->get_dim();
     int p = m_obj->get_p();
     int n = m_obj->get_sample_num();
@@ -133,7 +134,7 @@ namespace SAM {
           // loop level 2: proximal newton on active set
           int loopcnt_level_2 = 0;
           bool terminate_loop_level_2 = true;
-          std::cout << "Entered loop 2" << std::endl;
+          std::cout << "Entered loop 2" << dev_thr << std::endl;
           while (loopcnt_level_2 < m_param.max_iter) {
             loopcnt_level_2++;
             terminate_loop_level_2 = true;
@@ -159,7 +160,7 @@ namespace SAM {
 
             if (terminate_loop_level_2) break;
           }
-          std::cout << "Ended loop 2" << std::endl;
+          std::cout << "Ended loop 2 " << std::endl;
 
           itercnt_path[i] += loopcnt_level_2;
 
@@ -250,7 +251,7 @@ namespace SAM {
 
     }
     std::cout << "Ended loop i" << std::endl;
-    printf("done\n");
+    printf("done: %f %f\n", m_obj->eval(), err0);
 
     delete regfunc;
   }

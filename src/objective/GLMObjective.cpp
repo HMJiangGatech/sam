@@ -2,10 +2,14 @@
 #include "../utils.hpp"
 #include <stdio.h>
 #include <iostream>
+#include "../eigen3/Eigen/Eigenvalues"
+#include <complex>
+#include <algorithm>
 
 namespace SAM {
-  const double eps = 1e-5;
+  const double eps = 1e-4;
   using Eigen::ArrayXd;
+  using Eigen::VectorXcd;
 
   GLMObjective::GLMObjective(const double *xmat, const double *y, int n, int d, int p,
                              double step_size0, bool include_intercept)
@@ -34,41 +38,63 @@ namespace SAM {
 
   VectorXd GLMObjective::coordinate_descent(RegFunction *regfunc, int idx) {
 
-    double step_size = step_size0/10;
 
     VectorXd tmp;
-    double loss0 = calc_loss(idx, VectorXd(p));
-    while (false and step_size > eps) {
-      tmp = regfunc->threshold_p((model_param.beta[idx] - gr[idx] / step_size), step_size);
-      VectorXd delta_beta = tmp - model_param.beta[idx];
-      if (gr[idx].dot(delta_beta) + 0.5*step_size*(delta_beta).dot(delta_beta)+loss0 >= calc_loss(idx, delta_beta)) {
-        step_size /= 2;
-      } else {
-        // if (dbg_counter++ < 10) {
-        //   printf("%f %f\n", gr[idx].dot(delta_beta) + 0.5*step_size*(delta_beta).dot(delta_beta)+loss0, calc_loss(idx, delta_beta));
-        //   printf("tmp:\n");
-        //   std::cout << tmp << std::endl;
-        // }
-        step_size *= 2;
-        break;
-      }
+    VectorXd V0(p);
+    V0.setZero();
+    double loss0 = calc_loss(idx, V0);
+    MatrixXd wXX(p, p);
+    for (int i = 0; i < p; i++)
+      for (int j = 0; j < p; j++)
+        wXX(i, j) = 0;
+    for (int i = 0; i < n; i++)
+      wXX += W[i] * X[idx].row(i).transpose() * X[idx].row(i);
+
+    VectorXcd eigenvalues = wXX.eigenvalues();
+    //std::cout << "eigen:" << eigenvalues << std::endl;
+    double step_size = 0;
+    for (int i = 0; i < eigenvalues.size(); i++) {
+      step_size = std::max(step_size, eigenvalues[i].real());
     }
+    assert(step_size >= 0);
+    step_size *= 2;
+    
+    
+    // while (step_size > eps) {
+    //   tmp = regfunc->threshold_p((model_param.beta[idx] - gr[idx] / step_size), step_size);
+    //   VectorXd delta_beta = tmp - model_param.beta[idx];
+    //   if (gr[idx].dot(delta_beta) + 0.5*step_size*(delta_beta).dot(delta_beta)+loss0 >= calc_loss(idx, delta_beta)) {
+    //     step_size /= 2;
+    //   } else {
+    //     // if (dbg_counter++ < 10) {
+    //     //   printf("%f %f\n", gr[idx].dot(delta_beta) + 0.5*step_size*(delta_beta).dot(delta_beta)+loss0, calc_loss(idx, delta_beta));
+    //     //   printf("tmp:\n");
+    //     //   std::cout << tmp << std::endl;
+    //     // }
+    //     step_size *= 2;
+    //     break;
+    //   }
+    // }
     
     tmp = regfunc->threshold_p((model_param.beta[idx] - gr[idx] / step_size), step_size);
     VectorXd delta_beta = tmp - model_param.beta[idx];
     static int dbg_counter2 = 0;
-    if (dbg_counter2 < 200)
-      printf("step_size:%f %.20f %.20f %f %f %f\n", step_size, 
+    if (idx == 0 || dbg_counter2 < 200)
+      printf("step_size:%f %.20f %.20f %f %f %f %d\n",
+             step_size,
              gr[idx].dot(delta_beta)+ 0.5*step_size*(delta_beta).dot(delta_beta),
-             calc_loss(idx, tmp-model_param.beta[idx])-loss0,
-               calc_norm(delta_beta), calc_norm(gr[idx]), regfunc->get_lambda());
-    tmp = (model_param.beta[idx] - gr[idx] / step_size) ;
+             calc_loss(idx, delta_beta)-loss0,
+             calc_norm(delta_beta),
+             calc_norm(gr[idx]),
+             regfunc->get_lambda(),
+             int(-gr[idx].dot(delta_beta)>0));
+    tmp = model_param.beta[idx] - gr[idx] / step_size;
     VectorXd old_beta = model_param.beta[idx];
     model_param.beta[idx] = regfunc->threshold_p(tmp, step_size);
     // printf("%f %f %f %f\n", calc_norm(model_param.beta[idx]), calc_norm(gr[idx]), calc_norm(tmp), calc_norm(old_beta));
 
     delta_beta = model_param.beta[idx] - old_beta;
-    
+
     double e1, e2;
     if (dbg_counter2 < 200) {
       update_auxiliary();
@@ -81,7 +107,7 @@ namespace SAM {
       // r -= delta*w*X
       if (dbg_counter2 >= 200)
         R = R - W.cwiseProduct(X[idx] * delta_beta);
-    }    
+    }
     if (dbg_counter2++ < 200) {
       update_auxiliary();
       e2 = eval();
@@ -98,13 +124,26 @@ namespace SAM {
   }
 
   void GLMObjective::update_gradient(int idx) {
-    gr[idx] = X[idx].transpose() * (Y - P) / n;
+    gr[idx] = X[idx].transpose() * (P - Y) / n;
   }
 
   double GLMObjective::get_local_change(const VectorXd &old, int idx) {
     VectorXd delta_beta = old - model_param.beta[idx];
-    VectorXd delta_Xb = X[idx] * delta_beta;
-    return delta_beta.cwiseProduct(W).dot(delta_beta);
+    // VectorXd delta_Xb = X[idx] * delta_beta;
+    // MatrixXd wXX(p, p);
+    // for (int i = 0; i < p; i++)
+    //   for (int j = 0; j < p; j++)
+    //     wXX(i, j) = 0;
+    // for (int i = 0; i < n; i++)
+    //   wXX += W[i] * X[idx].row(i).transpose() * X[idx].row(i);
+    // VectorXcd eigenvalues = wXX.eigenvalues();
+    // //std::cout << "eigen:" << eigenvalues << std::endl;
+    // double max_eigen = 0;
+    // for (int i = 0; i < eigenvalues.size(); i++) {
+    //   max_eigen = std::max(max_eigen, eigenvalues[i].real());
+    // }
+    // return max_eigen * (delta_beta.dot(delta_beta)) / (2 * n);
+    return calc_norm(delta_beta);
   }
   double GLMObjective::get_local_change_intercept(double old) {
     double tmp = old - model_param.intercept;
@@ -166,7 +205,7 @@ namespace SAM {
     update_auxiliary();
 
     deviance = fabs(eval());
-  };
+  }
 
   void PoissonObjective::update_auxiliary() {
     P = Xb.array() + model_param.intercept;
