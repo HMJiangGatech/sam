@@ -31,7 +31,7 @@ extern "C" void grpPR(double *A, double* yy, double *lambda, int *nnlambda, doub
     y(i) == yy[i];
   }
   for (int i = 0; i < nlambda; i++) {
-    lambda[i] /= (n/5);
+    lambda[i] /= n;
   }
 
   SolverParams *param = new SolverParams();
@@ -49,7 +49,7 @@ extern "C" void grpPR(double *A, double* yy, double *lambda, int *nnlambda, doub
   param->max_iter = max_ite;
   param->num_relaxation_round = 10;
 
-  ObjFunction *obj = new PoissonObjective(A, z, n, d, p, L0, param->include_intercept);
+  ObjFunction *obj = new PoissonObjective(A, yy, n, d, p, L0, param->include_intercept);
 
   ActNewtonSolver solver(obj, *param);
 

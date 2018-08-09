@@ -20,6 +20,7 @@
 #' @param lambda.min.ratio Smallest value for lambda, as a fraction of lambda.max, the (data derived) entry value (i.e. the smallest value for which all coefficients are zero). The default is 0.1.
 #' @param thol Stopping precision. The default value is 1e-5.
 #' @param max.ite The number of maximum iterations. The default value is 1e5.
+#' @param regfunc A string indicating the regularizer. The default value is "L1". You can also assign "MCP" or "SCAD" to it.
 #' @return
 #' \item{p}{
 #'   The number of baisis spline functions used in training.  
@@ -76,7 +77,7 @@
 #' ## predicting response
 #' out.tst = predict(out.trn,Xt)
 #' @export
-samEL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 0.25, thol=1e-5, regfunc="L1", max.ite = 1e5){
+samEL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 0.25, thol=1e-5, max.ite = 1e5, regfunc="L1"){
 	
 	gcinfo(FALSE)
 	fit = list()
@@ -140,12 +141,17 @@ samEL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 0.
 		lambda = exp(seq(log(1),log(lambda.min.ratio),length=nlambda))*lambda_max
 	} else nlambda = length(lambda)
 	
-	out = .C("grpPR", A = as.double(Z), y = as.double(y), lambda = as.double(lambda), nlambda = as.integer(nlambda), LL0 = as.double(L0), nn = as.integer(n), dd = as.integer(d), pp = as.integer(p), xx = as.double(matrix(0,m+1,nlambda)), aa0 = as.double(a0), mmax_ite = as.integer(max.ite), tthol = as.double(thol), regfunc = as.character(regfunc), aalpha = as.double(0.5), z = as.double(z),df = as.integer(rep(0,nlambda)),func_norm = as.double(matrix(0,d,nlambda)), package="SAM")
+	out = .C("grpPR", A = as.double(Z), y = as.double(y), lambda = as.double(lambda), nlambda = as.integer(nlambda), 
+	         LL0 = as.double(L0), nn = as.integer(n), dd = as.integer(d), pp = as.integer(p), 
+	         xx = as.double(matrix(0,m+1,nlambda)), aa0 = as.double(a0), mmax_ite = as.integer(max.ite), 
+	         tthol = as.double(thol), regfunc = as.character(regfunc), aalpha = as.double(0.5), 
+	         z = as.double(z),df = as.integer(rep(0,nlambda)),func_norm = as.double(matrix(0,d,nlambda)), package="SAM")
 
 	fit$lambda = out$lambda
 	fit$w = matrix(out$xx,ncol=nlambda)
 	fit$df = out$df
 	fit$func_norm = matrix(out$func_norm,ncol=nlambda)
+	
 	
 	rm(out,X,y,Z,X.min.rep,X.ran.rep)
 

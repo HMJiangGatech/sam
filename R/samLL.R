@@ -20,6 +20,7 @@
 #' @param lambda.min.ratio Smallest value for lambda, as a fraction of lambda.max, the (data derived) entry value (i.e. the smallest value for which all coefficients are zero). The default is 0.1.
 #' @param thol Stopping precision. The default value is 1e-5.
 #' @param max.ite The number of maximum iterations. The default value is 1e5.
+#' @param regfunc A string indicating the regularizer. The default value is "L1". You can also assign "MCP" or "SCAD" to it.
 #' @return
 #' \item{p}{
 #'   The number of baisis spline functions used in training.  
@@ -81,7 +82,7 @@
 #' ## predicting response
 #' out.tst = predict(out.trn,Xt)
 #' @export
-samLL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 0.1, thol=1e-5, regfunc="L1", max.ite = 1e2){
+samLL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 0.1, thol=1e-5, max.ite = 1e5, regfunc="L1"){
 	
 	gcinfo(FALSE)
 	fit = list()

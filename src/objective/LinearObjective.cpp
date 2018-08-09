@@ -23,7 +23,6 @@ namespace SAM {
     r = Y;
     update_auxiliary();
 
-    // saturated fvalue = 0
     deviance = fabs(eval());
   }
 
@@ -35,7 +34,6 @@ namespace SAM {
     model_param.beta[idx] = regfunc->threshold(tmp) * n;
 
     r = r - X[idx] * (model_param.beta[idx] - beta_old);
-    // std::cout << calc_norm(model_param.beta[idx]) << ' ';
     return model_param.beta[idx];
   }
 

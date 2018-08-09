@@ -51,9 +51,6 @@ namespace SAM {
     VectorXd threshold_l1(VectorXd x, double thr) {
       double norm = calc_norm(x);
       static int dbg_counter = 0;
-      if (dbg_counter++ < 10) {
-        printf("%f %f\n", calc_norm(x), thr);
-      }
       if (norm <= thr) {
         for (int i = 0; i < (int)x.size(); i++)
           x[i] = 0;

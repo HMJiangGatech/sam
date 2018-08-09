@@ -16,7 +16,6 @@ namespace SAM {
 
 
   void ActNewtonSolver::solve(double *sse, int *df) {
-    double err0 = m_obj->eval();
     int d = m_obj->get_dim();
     int p = m_obj->get_p();
     int n = m_obj->get_sample_num();
@@ -36,7 +35,6 @@ namespace SAM {
     vector<VectorXd> grad(d);
     vector<VectorXd> grad_master(d);
 
-    // std::vector<double> Xb_master(n);
     VectorXd Xb_master(n);
 
     double max_grad = 0;
@@ -46,10 +44,7 @@ namespace SAM {
       grad[i] = m_obj->get_grad(i);
       grad[i] = grad[i].cwiseAbs();
       max_grad = std::max(max_grad, calc_norm(grad[i]));
-      if (i < 10)
-        std::cout << i << ' ' << calc_norm(grad[i]) << std::endl;
     }
-    printf("max_grad:%f\n", max_grad);
 
     // model parameters on the master path
     // each master parameter is relaxed into SCAD/MCP parameter
@@ -58,17 +53,10 @@ namespace SAM {
 
     for (int i = 0; i < d; i++) grad_master[i] = grad[i];
 
-    double grad_max = 0;
-    for (int i = 0; i < d; i++) {
-      grad_max = std::max(grad_max, calc_norm(grad[i]));
-    }
-    // std::cout << "grad_max: " << grad_max << std::endl;
-
     std::vector<double> stage_lambdas(d, 0);
     RegFunction *regfunc = new RegL1();
 
     for (int i = 0; i < (int)lambdas.size(); i++) {
-      // Rprintf("lambda[%d]:%f\n", i, lambdas[i]);
       // start with the previous solution on the master path
       m_obj->set_model_param(model_master);
       m_obj->set_model_Xb(Xb_master);
@@ -94,7 +82,6 @@ namespace SAM {
         }
       }
 
-      std::cout << "Entered loop i" << std::endl;
 
       m_obj->update_auxiliary();
       // loop level 0: multistage convex relaxation
@@ -102,14 +89,12 @@ namespace SAM {
       int idx;
       double old_intcpt;
       VectorXd old_beta, updated_coord, beta;
-      std::cout << "Entered loop 0" << std::endl;
       while (loopcnt_level_0 < (int)m_param.num_relaxation_round) {
         loopcnt_level_0++;
 
         // loop level 1: active set update
         int loopcnt_level_1 = 0;
         bool terminate_loop_level_1 = true;
-        std::cout << "Entered loop 1" << std::endl;
         while (loopcnt_level_1 < m_param.max_iter) {
           loopcnt_level_1++;
           terminate_loop_level_1 = true;
@@ -121,20 +106,16 @@ namespace SAM {
           actset_idx.clear();
           for (int j = 0; j < d; j++)
             if (actset_indcat[j]) {
-              // std::cout << ", " << j << std::endl;
               regfunc->set_param(stage_lambdas[j], 0.0);
               updated_coord = m_obj->coordinate_descent(regfunc, j);
-              // printf("%d %d %d %f\n", i, loopcnt_level_0, j, calc_norm(updated_coord));
               if (calc_norm(updated_coord) > 0) actset_idx.push_back(j);
-              // std::cout << ". " << j << std::endl;
             }
 
-          std::cout << i << ' ' << loopcnt_level_0 << ' ' << loopcnt_level_1 << ' ' << actset_idx.size() << std::endl;
 
           // loop level 2: proximal newton on active set
           int loopcnt_level_2 = 0;
           bool terminate_loop_level_2 = true;
-          std::cout << "Entered loop 2" << dev_thr << std::endl;
+          // std::cout << "Entered loop 2" << dev_thr << std::endl;
           while (loopcnt_level_2 < m_param.max_iter) {
             loopcnt_level_2++;
             terminate_loop_level_2 = true;
@@ -160,7 +141,6 @@ namespace SAM {
 
             if (terminate_loop_level_2) break;
           }
-          std::cout << "Ended loop 2 " << std::endl;
 
           itercnt_path[i] += loopcnt_level_2;
 
@@ -194,9 +174,6 @@ namespace SAM {
 
           if (!new_active_idx) break;
         }
-        std::cout << "Ended loop 1" << std::endl;
-
-        // Rprintf("---loop level 1 cnt:%d\n", loopcnt_level_1);
 
         if (loopcnt_level_0 == 1) {
           const ModelParam &model_master_ref = m_obj->get_model_param_ref();
@@ -240,7 +217,6 @@ namespace SAM {
             stage_lambdas[j] = lambdas[i];
         }
       }
-      std::cout << "Ended loop 0" << std::endl;
 
       solution_path.push_back(m_obj->get_model_param());
 
@@ -250,8 +226,6 @@ namespace SAM {
 
 
     }
-    std::cout << "Ended loop i" << std::endl;
-    printf("done: %f %f\n", m_obj->eval(), err0);
 
     delete regfunc;
   }
