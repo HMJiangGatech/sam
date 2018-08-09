@@ -20,6 +20,7 @@
 #' @param lambda.min.ratio Smallest value for lambda, as a fraction of lambda.max, the (data derived) entry value (i.e. the smallest value for which all coefficients are zero). The default is 5e-3.
 #' @param thol Stopping precision. The default value is 1e-5.
 #' @param max.ite The number of maximum iterations. The default value is 1e5.
+#' @param regfunc A string indicating the regularizer. The default value is "L1". You can also assign "MCP" or "SCAD" to it.
 #' @return
 #' \item{p}{
 #'   The number of baisis spline functions used in training.  
@@ -51,8 +52,8 @@
 #' \item{func_norm}{
 #'   The functional norm matrix (\code{d} by length of \code{lambda}) with each column corresponds to a regularization parameter. Since we have \code{d} input variabls, the length of each column is \code{d}.
 #' }
-#'   \item{sse}{
-#' Sums of square errors of the solution path.
+#' \item{sse}{
+#'   Sums of square errors of the solution path.
 #' }
 #' @seealso \code{\link{SAM}},\code{\link{plot.samQL},\link{print.samQL},\link{predict.samQL}}
 #' @examples 
@@ -80,7 +81,8 @@
 #' 
 #' ## predicting response
 #' out.tst = predict(out.trn,Xt)
-samQL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 5e-3, thol=1e-5, max.ite = 1e5){
+#' @export
+samQL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 5e-3, thol=1e-5, max.ite = 1e5, regfunc="L1"){
 	
 	gcinfo(FALSE)
 	fit = list()
@@ -130,8 +132,9 @@ samQL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 5e
 			nlambda = 30
 		lambda = exp(seq(log(1),log(lambda.min.ratio),length = nlambda))
 	} else nlambda = length(lambda)
+
 	
-	out = .C("grplasso",y = as.double(y), X = as.double(Z), lambda = as.double(lambda), nnlambda = as.integer(nlambda), nn = as.integer(n), dd = as.integer(d), pp = as.integer(p), ww = as.double(matrix(0,m,nlambda)), mmax_ite = as.integer(max.ite), tthol = as.double(thol),iinput = as.integer(lambda_input), df=as.integer(rep(0,nlambda)), sse=as.double(rep(0,nlambda)), func_norm = as.double(matrix(0,d,nlambda)), package="SAM")
+	out = .C("grplasso",y = as.double(y), X = as.double(Z), lambda = as.double(lambda), nnlambda = as.integer(nlambda), nn = as.integer(n), dd = as.integer(d), pp = as.integer(p), ww = as.double(matrix(0,m,nlambda)), mmax_ite = as.integer(max.ite), tthol = as.double(thol), regfunc = as.character(regfunc), iinput = as.integer(lambda_input), df=as.integer(rep(0,nlambda)), sse=as.double(rep(0,nlambda)), func_norm = as.double(matrix(0,d,nlambda)), package="SAM")
 
 	fit$lambda = out$lambda
 	fit$w = matrix(out$w,ncol=nlambda)
@@ -139,6 +142,7 @@ samQL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 5e
 	fit$sse = out$sse
 	fit$func_norm = matrix(out$func_norm,ncol=nlambda)
 	fit$intercept = rep(y.mean,nlambda) - t(Z.mean)%*%fit$w
+	fit$XX = out$X
 
 	rm(out,X,y,Z,X.min.rep,X.ran.rep,Z.mean.rep)
 
@@ -155,6 +159,7 @@ samQL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 5e
 #' @param x An object with S3 class \code{"samQL"} 
 #' @param \dots System reserved (No specific usage)
 #' @seealso \code{\link{samQL}}
+#' @export
 print.samQL = function(x,...){
 	cat("Path length:",length(x$df),"\n")
 	cat("d.f.:",x$df[1],"--->",x$df[length(x$df)],"\n")
@@ -169,6 +174,7 @@ print.samQL = function(x,...){
 #' @param x An object with S3 class \code{"samQL"} 
 #' @param \dots System reserved (No specific usage)
 #' @seealso \code{\link{samQL}}
+#' @export
 plot.samQL = function(x,...){
 	par = par(omi = c(0.0, 0.0, 0, 0), mai = c(1, 1, 0.1, 0.1))
 	matplot(x$lambda[length(x$lambda):1],t(x$func_norm),type="l",xlab="Regularization Parameters",ylab = "Funcional Norms",cex.lab=2,log="x",lwd=2)
@@ -188,6 +194,7 @@ plot.samQL = function(x,...){
 #'   Predicted values also represented in a \code{n} by the length of \code{lambda} matrix, where \code{n} is testing sample size. 
 #' }
 #' @seealso \code{\link{samQL}}
+#' @export
 predict.samQL = function(object, newdata,...){
 	gcinfo(FALSE)
 	out = list()

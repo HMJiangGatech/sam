@@ -20,6 +20,7 @@
 #' @param lambda.min.ratio Smallest value for lambda, as a fraction of lambda.max, the (data derived) entry value (i.e. the smallest value for which all coefficients are zero). The default is 0.1.
 #' @param thol Stopping precision. The default value is 1e-5.
 #' @param max.ite The number of maximum iterations. The default value is 1e5.
+#' @param regfunc A string indicating the regularizer. The default value is "L1". You can also assign "MCP" or "SCAD" to it.
 #' @return
 #' \item{p}{
 #'   The number of baisis spline functions used in training.  
@@ -80,7 +81,8 @@
 #' 
 #' ## predicting response
 #' out.tst = predict(out.trn,Xt)
-samLL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 0.1, thol=1e-5, max.ite = 1e5){
+#' @export
+samLL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 0.1, thol=1e-5, max.ite = 1e5, regfunc="L1"){
 	
 	gcinfo(FALSE)
 	fit = list()
@@ -142,12 +144,12 @@ samLL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 0.
 		g = -z + colSums(matrix(rep(n1/n,m+1),n,m+1)*Z)
 
 		if(is.null(nlambda)) nlambda = 20;
-		
+
 		lambda_max=max(sqrt(colSums(matrix(g[1:(p*d)],p,d)^2)))
 		lambda = exp(seq(log(1),log(lambda.min.ratio),length=nlambda))*lambda_max
 	} else nlambda = length(lambda)
 	
-	out = .C("grpLR", A = as.double(Z), lambda = as.double(lambda), nlambda = as.integer(nlambda), LL0 = as.double(L0), nn = as.integer(n), dd = as.integer(d), pp = as.integer(p), xx = as.double(matrix(0,m+1,nlambda)), aa0 = as.double(a0), mmax_ite = as.integer(max.ite), tthol = as.double(thol), aalpha = as.double(0.5), z = as.double(z),df = as.integer(rep(0,nlambda)),func_norm = as.double(matrix(0,d,nlambda)), package="SAM")
+	out = .C("grpLR", A = as.double(Z), y = as.double(y), lambda = as.double(lambda), nlambda = as.integer(nlambda), LL0 = as.double(L0), nn = as.integer(n), dd = as.integer(d), pp = as.integer(p), xx = as.double(matrix(0,m+1,nlambda)), aa0 = as.double(a0), mmax_ite = as.integer(max.ite), tthol = as.double(thol), regfunc = as.character(regfunc), aalpha = as.double(0.5), z = as.double(z),df = as.integer(rep(0,nlambda)),func_norm = as.double(matrix(0,d,nlambda)), package="SAM")
 
 	fit$lambda = out$lambda
 	fit$w = matrix(out$xx,ncol=nlambda)
@@ -169,6 +171,7 @@ samLL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 0.
 #' @param x An object with S3 class \code{"samLL"} 
 #' @param \dots System reserved (No specific usage)
 #' @seealso \code{\link{samLL}}
+#' @export
 print.samLL = function(x,...){
 	cat("Path length:",length(x$df),"\n")
 	cat("d.f.:",x$df[1],"--->",x$df[length(x$df)],"\n")
@@ -184,6 +187,7 @@ print.samLL = function(x,...){
 #' @param x An object with S3 class \code{"samLL"} 
 #' @param \dots System reserved (No specific usage)
 #' @seealso \code{\link{samLL}}
+#' @export
 plot.samLL = function(x,...){
 	par = par(omi = c(0.0, 0.0, 0, 0), mai = c(1, 1, 0.1, 0.1))
 	matplot(x$lambda[length(x$lambda):1],t(x$func_norm),type="l",xlab="Regularization Parameters",ylab = "Funcional Norms",cex.lab=2,log="x",lwd=2)
@@ -206,6 +210,7 @@ plot.samLL = function(x,...){
 #' \item{labels}{
 #'   Predicted labels also represented in a \code{n} by the length of \code{lambda} matrix, where \code{n} is testing sample size. 
 #' @seealso \code{\link{samLL}}
+#' @export
 predict.samLL = function(object, newdata, thol = 0.5 ,...){
 	gcinfo(FALSE)
 	out = list()
@@ -228,8 +233,8 @@ predict.samLL = function(object, newdata, thol = 0.5 ,...){
 	}
 		
 	out$probs = exp(cbind(Zt,rep(1,nt))%*%object$w)
-	out$probs = out$prob/(1+out$prob)
-	out$labels = sign(out$values>thol)
+	out$probs = out$probs/(1+out$probs)
+	out$labels = sign(out$probs>thol)
 	
 	rm(Zt,newdata)
 	

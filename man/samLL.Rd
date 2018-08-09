@@ -5,7 +5,8 @@
 \title{Training function of Sparse Additive Logistic Regression}
 \usage{
 samLL(X, y, p = 3, lambda = NULL, nlambda = NULL,
-  lambda.min.ratio = 0.1, thol = 1e-05, max.ite = 1e+05)
+  lambda.min.ratio = 0.1, thol = 1e-05, max.ite = 1e+05,
+  regfunc = "L1")
 }
 \arguments{
 \item{X}{The \code{n} by \code{d} design matrix of the training set, where \code{n} is sample size and \code{d} is dimension.}
@@ -23,6 +24,8 @@ samLL(X, y, p = 3, lambda = NULL, nlambda = NULL,
 \item{thol}{Stopping precision. The default value is 1e-5.}
 
 \item{max.ite}{The number of maximum iterations. The default value is 1e5.}
+
+\item{regfunc}{A string indicating the regularizer. The default value is "L1". You can also assign "MCP" or "SCAD" to it.}
 }
 \value{
 \item{p}{
