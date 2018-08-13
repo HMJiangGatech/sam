@@ -49,18 +49,20 @@ We compared our results on linear regression and logistic regression with other 
 
 ### Linear Regression
 
-|       SAM with L1 | SAM with MCP | grplasso | grpreg with L1 | grpreg with MCP | gglasso
------ |------------ | -------------| -------- | -------------- | --------------- | -------
-time/s| 42.591      | 43.787       | 53.680   | 44.329         | 43.719          | 46.777
-loss  | 2.08e-5     | 1.66e-5      | 2.26e-4  | 5.18e-4        | 2.12e-5         | 2.86e-3
+
+
+| t    | SAM with L1 | SAM with MCP | grplasso | grpreg with L1 | grpreg with MCP | gglasso|
+| ---- | ----------- | ------------ | -------- | -------------- | --------------- | ------ |
+|time/s| 42.591      | 43.787       | 53.680   | 44.329         | 43.719          | 46.777 |
+|loss  | 2.08e-5     | 1.66e-5      | 2.26e-4  | 5.18e-4        | 2.12e-5         | 2.86e-3|
 
 
 ### Logistic Regression
 
-|          SAM with L1 | SAM with MCP | grplasso | grpreg with L1 | grpreg with MCP
--------- |------------ | -------------| -------- | -------------- | ---------------
-time/s   | 18.700      | 43.787       | 22.229   | 121.701        | 39.9247
-accuracy | 0.9054      | 0.9226       | 0.9102   | 0.9052         | 0.8843
+|         | SAM with L1 | SAM with MCP | grplasso | grpreg with L1 | grpreg with MCP|
+|-------- |------------ | -------------| -------- | -------------- | ---------------|
+|time/s   | 18.700      | 43.787       | 22.229   | 121.701        | 39.9247        |
+|accuracy | 0.9054      | 0.9226       | 0.9102   | 0.9052         | 0.8843         |
 
 
 
