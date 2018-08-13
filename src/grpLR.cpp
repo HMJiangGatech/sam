@@ -28,7 +28,6 @@ extern "C" void grpLR(double *A, double *y, double *lambda, int *nnlambda, doubl
   for (int i = 0; i < nlambda; i++) {
     lambda[i] /= n;
   }
-  printf("lambda:%f\n", lambda[0]);
 
 
   SolverParams *param = new SolverParams();
