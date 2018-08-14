@@ -1,5 +1,5 @@
-# SAM: Sparse Additive Modelling
-
+<h1 align="center">SAM</h1>
+<h4 align="center">R Package for Sparse Additive Modelling</h4>
 
 The package SAM targets at high dimensional predictive modeling (regression and classification) for complex data analysis. SAM is short for sparse additive modeling, and adopts the computationally efficient basis spline technique. We solve the optimization problems by various computational algorithms including the block coordinate descent algorithm, fast iterative soft-thresholding algorithm, and newton method. The computation is further accelerated by warm-start and active-set tricks.
 
@@ -202,10 +202,8 @@ We compared our results on linear regression and logistic regression with other 
 
 
 ## Reference
-[1] [Zhao, Tuo, and Han Liu, Sparse Additive Machine, 2012.](http://proceedings.mlr.press/v22/zhao12/zhao12.pdf)
-
-[2] [Pradeep Ravikumar, John Lafferty, Han Liu, Larry Wasserman, Pradeep, et al. Sparse additive models, 2009](https://rss.onlinelibrary.wiley.com/doi/epdf/10.1111/j.1467-9868.2009.00718.x)
-
+[1] [Zhao, Tuo, and Han Liu, Sparse Additive Machine, 2012.](http://proceedings.mlr.press/v22/zhao12/zhao12.pdf)  
+[2] [Pradeep Ravikumar, John Lafferty, Han Liu, Larry Wasserman, Pradeep, et al. Sparse additive models, 2009](https://rss.onlinelibrary.wiley.com/doi/epdf/10.1111/j.1467-9868.2009.00718.x)  
 [3] [Xingguo Li, Jason Ge, Haoming Jiang, Mingyi Hong, Mengdi Wang, and Tuo Zhao, Boosting Pathwise Coordiante Optimization: Sequential Screening and Proximal Subsampled Newton Subroutine, 2016](https://www2.isye.gatech.edu/~tzhao80/)
 
 
