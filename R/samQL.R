@@ -123,7 +123,7 @@ samQL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 5e
 	Z.mean.rep = matrix(rep(Z.mean,n),nrow=n,byrow=T)
 	Z = Z - Z.mean.rep
 	y.mean = mean(y)
-	y = y - y.mean	
+	y = y - y.mean
 	
 	lambda_input = 1		
 	if(is.null(lambda)){
