@@ -203,7 +203,7 @@ plot.samHL = function(x,...){
 #'   Predicted decision values also represented in a \code{n} by the length of \code{lambda} matrix, where \code{n} is testing sample size. 
 #' }
 #' \item{labels}{
-#'   Predicted labels also represented in a \code{n} by the length of \code{lambda} matrix, where \code{n} is testing sample size. 
+#'   Predicted labels also represented in a \code{n} by the length of \code{lambda} matrix, where \code{n} is testing sample size. }
 #' @seealso \code{\link{samHL}}
 #' @export
 predict.samHL = function(object, newdata, thol = 0, ...){

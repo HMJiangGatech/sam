@@ -208,7 +208,7 @@ plot.samLL = function(x,...){
 #'   Estimated Posterior Probability for Prediction also represented in a \code{n} by the length of \code{lambda} matrix, where \code{n} is testing sample size. 
 #' }
 #' \item{labels}{
-#'   Predicted labels also represented in a \code{n} by the length of \code{lambda} matrix, where \code{n} is testing sample size. 
+#'   Predicted labels also represented in a \code{n} by the length of \code{lambda} matrix, where \code{n} is testing sample size. }
 #' @seealso \code{\link{samLL}}
 #' @export
 predict.samLL = function(object, newdata, thol = 0.5 ,...){

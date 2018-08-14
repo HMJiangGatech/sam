@@ -28,34 +28,24 @@ OBJC = /usr/local/bin/clang-omp
 OBJCXX = /usr/local/bin/clang-omp++
 ```
 
-### Installing manually
+### Installing from GitHub
 
-Download the repo to a folder, open an R terminal in root of the project folder, and then install devtools by typing
+First, you need to install the devtools package. You can do this from CRAN. Invoke R and then type
 
 ```
 install.packages(devtools)
 ```
 
-Then load the devtools package with
+Then load the devtools package and install SAM
 
 ```
 library(devtools)
-```
-
-Then, to install the package, type
-
-```
-install()
-```
-
-Finally load SAM with
-
-```
+install_github("HMJiangGatech/sam")
 library(SAM)
 ```
 
 
-### Installing by CRAN (not available yet)
+### Install from CRAN (not up to date yet)
 
 Ideally you can just install and enable SAM using with the help of CRAN on an R console, but we haven't uploaded the package to CRAN yet, so this method is not available so far.
 
@@ -106,7 +96,7 @@ X = 0.5*matrix(runif(n*d),n,d) + matrix(rep(0.5*runif(n),d),n,d)
 y = sign(((X[,1]-0.5)^2 + (X[,2]-0.5)^2)-0.06)
 
 ## flipping about 5 percent of y
-y = y*sign(runif(n)-0.05) 
+y = y*sign(runif(n)-0.05)
 y = sign(y==1)
 
 ## Training
@@ -123,7 +113,7 @@ Xt = 0.5*matrix(runif(nt*d),nt,d) + matrix(rep(0.5*runif(nt),d),nt,d)
 yt = sign(((Xt[,1]-0.5)^2 + (Xt[,2]-0.5)^2)-0.06)
 
 ## flipping about 5 percent of y
-yt = yt*sign(runif(nt)-0.05) 
+yt = yt*sign(runif(nt)-0.05)
 yt = sign(yt==1)
 
 ## predicting response
@@ -206,12 +196,11 @@ We compared our results on linear regression and logistic regression with other 
 
 
 ## Reference
-[1] [Zhao, Tuo, and Han Liu. Sparse Additive Machine. AISTATS. 2012.](http://proceedings.mlr.press/v22/zhao12/zhao12.pdf)
+[1] [Zhao, Tuo, and Han Liu, Sparse Additive Machine, 2012.](http://proceedings.mlr.press/v22/zhao12/zhao12.pdf)
 
-[2] [Ravikumar, Pradeep, et al. Sparse additive models. 2009](https://rss.onlinelibrary.wiley.com/doi/epdf/10.1111/j.1467-9868.2009.00718.x)
+[2] [Pradeep Ravikumar, John Lafferty, Han Liu, Larry Wasserman, Pradeep, et al. Sparse additive models, 2009](https://rss.onlinelibrary.wiley.com/doi/epdf/10.1111/j.1467-9868.2009.00718.x)
 
-[3] [Picasso: A Sparse Learning Library for High Dimensional Data Analysis in R and Python](https://cran.r-project.org/web/packages/picasso/vignettes/vignette.pdf)
-
+[3] [Xingguo Li, Jason Ge, Haoming Jiang, Mingyi Hong, Mengdi Wang, and Tuo Zhao, Boosting Pathwise Coordiante Optimization: Sequential Screening and Proximal Subsampled Newton Subroutine, 2016](https://www2.isye.gatech.edu/~tzhao80/)
 
 
 ## GSOC TODO List
