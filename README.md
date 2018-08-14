@@ -44,7 +44,7 @@ install_github("HMJiangGatech/sam")
 library(SAM)
 ```
 
-*Windows User:*  If you enconter a Rtools version issues: 1. make sure you install the latest [Rtools](https://cran.r-project.org/bin/windows/Rtools/); 2. try the following code
+*Windows User:*  If you enconter a Rtools version issue: 1. make sure you install the latest [Rtools](https://cran.r-project.org/bin/windows/Rtools/); 2. try the following code
 ```R
 assignInNamespace("version_info", c(devtools:::version_info, list("3.5" = list(version_min = "3.3.0", version_max = "99.99.99", path = "bin"))), "devtools")
 ```
