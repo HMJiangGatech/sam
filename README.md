@@ -96,7 +96,7 @@ out.tst = predict(out.trn,Xt)
 
 ### Examples for logistic regression
 
-```
+```R
 ## generating training data
 n = 200
 d = 100
@@ -130,7 +130,7 @@ out.tst = predict(out.trn,Xt)
 
 ### Examples for Poisson Regression
 
-```
+```R
 ## generating training data
 n = 200
 d = 100
