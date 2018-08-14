@@ -9,6 +9,8 @@ For Windows and Linux users, newest version of GCC has fully support of OpenMP.
 
 But for MAC OS users, things are a little tricky since the default llvm on MAC OS does not support OpenMP. But the solution is easy. You can simply install llvm with full OpenMP support and direct R using this version of llvm.
 
+First, install llvm with OpenMP support by typing
+
 ```
 brew install llvm
 ```
@@ -28,7 +30,7 @@ OBJCXX = /usr/local/bin/clang-omp++
 
 ### Installing manually
 
-Download the repo to a folder, open an R terminal in the folder, and then install devtools by typing
+Download the repo to a folder, open an R terminal in root of the project folder, and then install devtools by typing
 
 ```
 install.packages(devtools)
@@ -66,7 +68,7 @@ library(SAM)
 
 With SAM, you can run linear regression, logistic regression and poisson regression.
 
-### Examples for linear regression
+### Example of linear regression
 
 ```R
 ## generating training data
@@ -94,7 +96,7 @@ yt = -2*sin(Xt[,1]) + Xt[,2]^2-1/3 + Xt[,3]-1/2 + exp(-Xt[,4])+exp(-1)-1
 out.tst = predict(out.trn,Xt)
 ```
 
-### Examples for logistic regression
+### Example of logistic regression
 
 ```R
 ## generating training data
@@ -128,7 +130,7 @@ yt = sign(yt==1)
 out.tst = predict(out.trn,Xt)
 ```
 
-### Examples for Poisson Regression
+### Example of Poisson Regression
 
 ```R
 ## generating training data
@@ -157,11 +159,11 @@ for(i in 1:nt) yt[i] = rpois(1,ut[i])
 out.tst = predict(out.trn,Xt)
 ```
 
-To get the complete documentation of SAM, please type `?SAM` in an R terminal.
+To get complete documentation of SAM, please type `?SAM` in an R terminal.
 
 ## Experiments
 
-The experiment scripts are in the folder `tests/testthat/`, to run the experiments, you should open the R terminal in the root of the project folder, and type
+The scripts used for experiments are in the folder `tests/testthat/`, to run the experiments, you should open the R terminal in the root of the project folder, and type
 
 ```
 source("tests/testthat/test_linear.R")
@@ -204,8 +206,8 @@ We compared our results on linear regression and logistic regression with other 
 
 
 ## Reference
-[1] [Zhao, Tuo, and Han Liu. Sparse Additive Machine. AISTATS. 2012.](http://proceedings.mlr.press/v22/zhao12/zhao12.pdf)  
-[2] [Ravikumar, Pradeep, et al. Sparse additive models. 2009](https://rss.onlinelibrary.wiley.com/doi/epdf/10.1111/j.1467-9868.2009.00718.x)   
+[1] [Zhao, Tuo, and Han Liu. Sparse Additive Machine. AISTATS. 2012.](http://proceedings.mlr.press/v22/zhao12/zhao12.pdf)
+[2] [Ravikumar, Pradeep, et al. Sparse additive models. 2009](https://rss.onlinelibrary.wiley.com/doi/epdf/10.1111/j.1467-9868.2009.00718.x)
 [3] [Picasso: A Sparse Learning Library for High Dimensional Data Analysis in R and Python](https://cran.r-project.org/web/packages/picasso/vignettes/vignette.pdf)
 
 
