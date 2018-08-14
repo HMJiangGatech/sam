@@ -7,7 +7,7 @@ SAM uses OpenMP to enables faster matrix multiplication. So, to use SAM, you mus
 
 For Windows and Linux users, newest version of GCC has fully support of OpenMP.
 
-But for MAC OS users, things are a little tricky since the default llvm on MAC OS does not support OpenMP. But the solution is easy. You can simply installs llvm with full OpenMP support and tells R to use this version of llvm.
+But for MAC OS users, things are a little tricky since the default llvm on MAC OS does not support OpenMP. But the solution is easy. You can simply install llvm with full OpenMP support and tells R to use this version of llvm.
 
 ```
 brew install llvm
