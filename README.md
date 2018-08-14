@@ -1,5 +1,7 @@
-# SAM
-Sparse Additive Modelling
+# SAM: Sparse Additive Modelling
+
+
+The package SAM targets at high dimensional predictive modeling (regression and classification) for complex data analysis. SAM is short for sparse additive modeling, and adopts the computationally efficient basis spline technique. We solve the optimization problems by various computational algorithms including the block coordinate descent algorithm, fast iterative soft-thresholding algorithm, and newton method. The computation is further accelerated by warm-start and active-set tricks.
 
 ## Installation
 
