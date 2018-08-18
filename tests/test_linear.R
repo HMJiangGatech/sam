@@ -4,15 +4,17 @@ n = 5000
 d = 10000
 p = 3
 m = d * p
-t = 1
+t = 3
+
+library(splines)
+
 
 X = 0.5*matrix(runif(n*d),n,d) + matrix(rep(0.5*runif(n),d),n,d)
 y = -2*sin(X[,1]) + X[,2]^2-1/3 + X[,3]-1/2 + exp(-X[,4])+exp(-1)-1
 
 
-Xt = 0.5*matrix(runif(nt*d),nt,d) + matrix(rep(0.5*runif(nt),d),nt,d)
-yt = -2*sin(Xt[,1]) + Xt[,2]^2-1/3 + Xt[,3]-1/2 + exp(-Xt[,4])+exp(-1)-1
 
+genZ_t = proc.time()
 Z = matrix(0,n,m)
 for(j in 1:d){
   tmp = (j-1)*p + c(1:p)
@@ -23,6 +25,10 @@ for(j in 1:d){
 Z <-cbind(rep(1, n), Z)
 colnames(Z) <- c("Intercept", paste("X", 1:m, sep = ""))
 
+genZ_t = proc.time() - genZ_t
+
+Xt = 0.5*matrix(runif(nt*d),nt,d) + matrix(rep(0.5*runif(nt),d),nt,d)
+yt = -2*sin(Xt[,1]) + Xt[,2]^2-1/3 + Xt[,3]-1/2 + exp(-Xt[,4])+exp(-1)-1
 
 Zt = matrix(0,nt,m)
 for(j in 1:d){

@@ -13,7 +13,7 @@ for (i in 1:t) {
   total_l = total_l + mean((out.tst$values[,nlamb]-yt)^2/2)
 }
 print("sam lin-reg:")
-print(total_t / t)
+print(total_t / t - genZ_t)
 print(total_l / t)
 
 
@@ -28,5 +28,5 @@ for (i in 1:t) {
   total_l = total_l + mean((out.tst$values[,nlamb]-yt)^2/2)
 }
 print("sam lin-reg with MCP:")
-print(total_t / t)
+print(total_t / t - genZ_t)
 print(total_l / t)

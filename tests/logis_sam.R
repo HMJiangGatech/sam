@@ -13,7 +13,7 @@ for (i in 1:t) {
   total_l = total_l + mean(out.tst$labels[,nlamb]==yt)
 }
 print("sam log-reg:")
-print(total_t / t)
+print(total_t / t - genZ_t)
 print(total_l / t)
 
 total_t = 0
@@ -27,5 +27,5 @@ for (i in 1:t) {
   total_l = total_l + mean(out.tst$labels[,nlamb]==yt)
 }
 print("sam log-reg with MCP:")
-print(total_t / t)
+print(total_t / t - genZ_t)
 print(total_l / t)
