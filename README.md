@@ -1,9 +1,15 @@
 <h1 align="center">SAM</h1>
+
+[![](https://cranlogs.r-pkg.org/badges/SAM)](https://cran.r-project.org/package=SAM)
+
 <h4 align="center">R Package for Sparse Additive Modelling</h4>
 
 The package SAM targets at high dimensional predictive modeling (regression and classification) for complex data analysis. SAM is short for sparse additive modeling, and adopts the computationally efficient basis spline technique. We solve the optimization problems by various computational algorithms including the block coordinate descent algorithm, fast iterative soft-thresholding algorithm, and newton method. The computation is further accelerated by warm-start and active-set tricks.
 
 ## Installation
+
+
+### Prerequisites
 
 SAM uses OpenMP to enables faster matrix multiplication. So, to use SAM, you must correctly enables OpenMP for the compiler.
 
@@ -21,7 +27,7 @@ Then append the following lines into `~/.R/Makevars` to enable llvm with OpenMP 
 
 ```
 CC = /usr/local/bin/clang-omp
-CXX = /usr/local/bin/clang-ompclang-ompclang-omp++
+CXX = /usr/local/bin/clang-omp++
 CXX98 = /usr/local/bin/clang-omp++
 CXX11 = /usr/local/bin/clang-omp++
 CXX14 = /usr/local/bin/clang-omp++
@@ -29,6 +35,7 @@ CXX17 = /usr/local/bin/clang-omp++
 OBJC = /usr/local/bin/clang-omp
 OBJCXX = /usr/local/bin/clang-omp++
 ```
+
 
 ### Installing from GitHub
 
@@ -51,9 +58,9 @@ library(SAM)
 assignInNamespace("version_info", c(devtools:::version_info, list("3.5" = list(version_min = "3.3.0", version_max = "99.99.99", path = "bin"))), "devtools")
 ```
 
-### Install from CRAN (not up to date yet)
+### Installing from CRAN (not up to date yet)
 
-Ideally you can just install and enable SAM using with the help of CRAN on an R console, but we haven't uploaded the package to CRAN yet, so this method is not available so far.
+Ideally you can just install and enable SAM using with the help of CRAN on an R console, but we haven't uploaded the updated package to CRAN yet, so this method is not available so far.
 
 ```
 install.packages("SAM")
@@ -159,16 +166,16 @@ To get complete documentation of SAM, please type `?SAM` in an R terminal.
 
 ## Experiments
 
-The scripts used for experiments are in the folder `tests/testthat/`, to run the experiments, you should open the R terminal in the root of the project folder, and type
+The scripts used for experiments are in the folder `tests/`, to run the experiments, you should open the R terminal in the root of the project folder, and type
 
 ```
-source("tests/testthat/test_linear.R")
+source("tests/test_linear.R")
 ```
 
 or
 
 ```
-source("tests/testthat/test_logis.R")
+source("tests/test_logis.R")
 ```
 
 The machine we ran experiments on is a PC with
@@ -186,23 +193,23 @@ We compared our results on linear regression and logistic regression with other 
 ### Linear Regression
 
 
-|      | SAM with L1 | SAM with MCP | grplasso | grpreg with L1 | grpreg with MCP | gglasso|
-| ---- | ----------- | ------------ | -------- | -------------- | --------------- | ------ |
-|time/s| 42.591      | 43.787       | 53.680   | 44.329         | 43.719          | 46.777 |
-|loss  | 2.08e-5     | 1.66e-5      | 2.26e-4  | 5.18e-4        | 2.12e-5         | 2.86e-3|
+|      | SAM with L1 | SAM with MCP | previous SAM | grplasso | grpreg with L1 | grpreg with MCP | gglasso|
+| ---- | ----------- | ------------ | ------------ | -------- | -------------- | --------------- | ------ |
+|time/s| 13.458      | 13.115       | 14.523       | 42.346   | 34.081         | 35.460          | 22.191 |
+|loss  | 2.08e-5     | 1.66e-5      | 2.06e-5      | 2.26e-4  | 5.18e-4        | 2.12e-5         | 2.86e-3|
 
 
 ### Logistic Regression
 
-|         | SAM with L1 | SAM with MCP | grplasso | grpreg with L1 | grpreg with MCP|
-| ------- | ----------- | ------------ | -------- | -------------- | -------------- |
-|time/s   | 18.700      | 43.787       | 22.229   | 121.701        | 39.9247        |
-|accuracy | 0.9054      | 0.9226       | 0.9102   | 0.9052         | 0.8843         |
+|         | SAM with L1 | SAM with MCP | previous SAM | grplasso | grpreg with L1 | grpreg with MCP|
+| ------- | ----------- | ------------ | ------------ | -------- | -------------- | -------------- |
+|time/s   | 7.758       | 9.384        | 96.361       | 18.700   | 92.922         | 28.333         |
+|accuracy | 0.9054      | 0.9226       | 0.9109       | 0.9102   | 0.9052         | 0.8843         |
 
 
 
 ## Reference
-[1] [Zhao, Tuo, and Han Liu, Sparse Additive Machine, 2012.](http://proceedings.mlr.press/v22/zhao12/zhao12.pdf)  
+[1] [Tuo Zhao, and Han Liu, Sparse Additive Machine, 2012.](http://proceedings.mlr.press/v22/zhao12/zhao12.pdf)  
 [2] [Pradeep Ravikumar, John Lafferty, Han Liu, Larry Wasserman, Pradeep, et al. Sparse additive models, 2009](https://rss.onlinelibrary.wiley.com/doi/epdf/10.1111/j.1467-9868.2009.00718.x)  
 [3] [Xingguo Li, Jason Ge, Haoming Jiang, Mingyi Hong, Mengdi Wang, and Tuo Zhao, Boosting Pathwise Coordiante Optimization: Sequential Screening and Proximal Subsampled Newton Subroutine, 2016](https://www2.isye.gatech.edu/~tzhao80/)
 
