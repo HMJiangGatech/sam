@@ -214,23 +214,7 @@ We compared our results on linear regression and logistic regression with other 
 [3] [Xingguo Li, Jason Ge, Haoming Jiang, Mingyi Hong, Mengdi Wang, and Tuo Zhao, Boosting Pathwise Coordiante Optimization: Sequential Screening and Proximal Subsampled Newton Subroutine, 2016](https://www2.isye.gatech.edu/~tzhao80/)
 
 
-## GSOC TODO List
-
-### Code Refactoring and Benchmarking
-- [x] Use `roxygen2` to manage Documents.
-- [x] Benchmark the code.
-- [x] Use `Eigen` to accelerate the code.
-- [x] Use `OpenMP` to enable multi-processing.
-
-### Solver Upgrade
-- [x] Implement Active Set Newton solver.
-
-### Functional Penalties
-- [x] Add MCP
-- [x] Add SCAD
-
-### Polish and submit
-- [x] Polish `readme.md`
-- [x] Polish R Documents
-- [ ] Polish `vignette`
-- [ ] Submit to CRAN
+## TODO List
+- [ ] Use Rcpp fasion
+- [ ] Use RcppEigen
+- [ ] Solve the problems of installation on  machines without openmp
