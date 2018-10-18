@@ -1,30 +1,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "R.h"
 #include "math.h"
-#include "R_ext/BLAS.h"
-#include "R_ext/Lapack.h"
 #include <vector>
-#include "eigen3/Eigen/SVD"
-#include "eigen3/Eigen/Dense"
+#include <Rcpp.h>
+#include <RcppEigen.h>
 #include "utils.hpp"
 #include "solver/actnewton.hpp"
 #include "objective/LinearObjective.hpp"
 #include <iostream>
-#include "omp.h"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
 using namespace SAM;
 
-extern "C" void grplasso(double *yy, double *XX, double *lambda, int *nnlambda, int *nn, int *dd, int *pp, double *ww, int *mmax_ite, double *tthol, char** regfunc, int *iinput, int *df, double *sse, double *func_norm)
-{
+//[[Rcpp::depends(RcppEigen)]]
+//[[Rcpp::plugins(openmp)]
 
-  int nProcessors=omp_get_max_threads();
-  Eigen::setNbThreads(nProcessors);
-  int counter,n,d,p,m,max_ite,nlambda;
+//[[Rcpp::export]]
+void grplasso(VectorXd &y, MatrixXd &X, double *lambda, int nlambda, int *nn, int *dd, int *pp, double *ww, int *mmax_ite, double *tthol, char** regfunc, int *iinput, int *df, double *sse, double *func_norm)
+{
+  int counter,n,d,p,m,max_ite;
   int ite_ext,ite_int;
   int s;
   int input;
@@ -32,7 +29,6 @@ extern "C" void grplasso(double *yy, double *XX, double *lambda, int *nnlambda, 
   double ilambda,thol;
   double lambda_max;
 
-  nlambda = *nnlambda;
   n = *nn;
   d = *dd;
   p = *pp;
@@ -44,21 +40,8 @@ extern "C" void grplasso(double *yy, double *XX, double *lambda, int *nnlambda, 
   lambda_max = 0;
 
   vector<MatrixXd> V(d);
-  VectorXd y(n);
-
-  for (int i = 0; i < n; i++)
-    y(i) = yy[i];
-
 
   for (int i = 0; i < d; i++){
-
-    MatrixXd X(n, p);
-    for (int j = 0; j < n; j++) {
-      for (int k = 0; k < p; k++) {
-        X(j,k) = XX[i*n*p + k*n + j];
-      }
-    }
-
     //std::cout << "X:" << std::endl << X << std::endl;
 
     Eigen::JacobiSVD<MatrixXd> svd(X, Eigen::ComputeThinU | Eigen::ComputeThinV);
@@ -103,7 +86,7 @@ extern "C" void grplasso(double *yy, double *XX, double *lambda, int *nnlambda, 
   param->max_iter = max_ite;
   param->num_relaxation_round = 10;
 
-  ObjFunction *obj = new LinearObjective(XX, yy, n, d, p, param->include_intercept);
+  ObjFunction *obj = new LinearObjective(XX, y, n, d, p, param->include_intercept);
 
   ActNewtonSolver solver(obj, *param);
 

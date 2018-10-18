@@ -140,7 +140,7 @@ namespace SAM {
     int m;
 
     vector<MatrixXd> X;
-    VectorXd Y;
+    VectorXd &Y;
 
     vector<VectorXd> gr;
     VectorXd Xb;
@@ -150,12 +150,11 @@ namespace SAM {
     double deviance;
 
   public:
-    ObjFunction(const double *xmat, const double *y, int n, int d, int p) : n(n), d(d), p(p), m(d*p), X(d), Y(n), gr(d), Xb(n), model_param(d, p) {
+    ObjFunction(const double *xmat, VectorXd &y, int n, int d, int p) : n(n), d(d), p(p), m(d*p), Y(y), X(d), gr(d), Xb(n), model_param(d, p) {
 
       for (int i = 0; i < d; i++)
         gr[i].resize(p);
       Xb.setZero();
-      for (int i = 0; i < n; i++) Y(i) = y[i];
       for (int k = 0; k < d; k++) {
         X[k].resize(n, p);
         for (int j = 0; j < p; j++) {
