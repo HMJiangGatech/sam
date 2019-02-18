@@ -1674,7 +1674,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
-OPENMP_CXXFLAGS=""
+OPENMP_CXXFLAGS="\$(SHLIB_OPENMP_CXXFLAGS)"
 
 if test `uname -s` = "Linux"
 then
@@ -2863,3 +2863,4 @@ if test -n "$ac_unrecognized_opts" && test "$enable_option_checking" != no; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: unrecognized options: $ac_unrecognized_opts" >&5
 $as_echo "$as_me: WARNING: unrecognized options: $ac_unrecognized_opts" >&2;}
 fi
+

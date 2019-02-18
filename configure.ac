@@ -4,7 +4,7 @@ AC_PREREQ(2.62)
 
 AC_INIT([SAM],)
 
-OPENMP_CXXFLAGS=""
+OPENMP_CXXFLAGS="\$(SHLIB_OPENMP_CXXFLAGS)"
 
 if test `uname -s` = "Linux"
 then
