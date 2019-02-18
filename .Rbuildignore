@@ -4,6 +4,7 @@ cran-comments.md
 benchmark/*
 revdep/*
 README.md
+configure.ac
 \.o$
 \.so$
 \.dll$
