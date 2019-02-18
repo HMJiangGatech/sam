@@ -11,7 +11,7 @@
 #'
 #' @param X The \code{n} by \code{d} design matrix of the training set, where \code{n} is sample size and \code{d} is dimension.
 #' @param y The \code{n}-dimensional response vector of the training set, where \code{n} is sample size.
-#' @param p The number of baisis spline functions. The default value is 3.
+#' @param p The number of basis spline functions. The default value is 3.
 #' @param lambda A user supplied lambda sequence. Typical usage is to have the program compute its own lambda sequence based on nlambda and lambda.min.ratio. Supplying a value of lambda overrides this. WARNING: use with care. Do not supply a single value for lambda. Supply instead a decreasing sequence of lambda values. samQL relies on its warms starts for speed, and its often faster to fit a whole path than compute a single fit.
 #' @param nlambda The number of lambda values. The default value is 30.
 #' @param lambda.min.ratio Smallest value for lambda, as a fraction of lambda.max, the (data derived) entry value (i.e. the smallest value for which all coefficients are zero). The default is 5e-3.
@@ -20,7 +20,7 @@
 #' @param regfunc A string indicating the regularizer. The default value is "L1". You can also assign "MCP" or "SCAD" to it.
 #' @return
 #' \item{p}{
-#'   The number of baisis spline functions used in training.
+#'   The number of basis spline functions used in training.
 #' }
 #' \item{X.min}{
 #'   A vector with each entry corresponding to the minimum of each input variable. (Used for rescaling in testing)
@@ -47,7 +47,7 @@
 #'   The \code{2} by \code{d} matrix. Each column contains the boundary points applied to the corresponding variable.
 #' }
 #' \item{func_norm}{
-#'   The functional norm matrix (\code{d} by length of \code{lambda}) with each column corresponds to a regularization parameter. Since we have \code{d} input variabls, the length of each column is \code{d}.
+#'   The functional norm matrix (\code{d} by length of \code{lambda}) with each column corresponds to a regularization parameter. Since we have \code{d} input variables, the length of each column is \code{d}.
 #' }
 #' \item{sse}{
 #'   Sums of square errors of the solution path.
@@ -175,14 +175,14 @@ print.samQL = function(x,...){
 #' @export
 plot.samQL = function(x,...){
   par = par(omi = c(0.0, 0.0, 0, 0), mai = c(1, 1, 0.1, 0.1))
-  matplot(x$lambda[length(x$lambda):1],t(x$func_norm),type="l",xlab="Regularization Parameters",ylab = "Funcional Norms",cex.lab=2,log="x",lwd=2)
+  matplot(x$lambda[length(x$lambda):1],t(x$func_norm),type="l",xlab="Regularization Parameters",ylab = "Functional Norms",cex.lab=2,log="x",lwd=2)
 }
 
 #' Prediction function for S3 class \code{"samQL"}
 #'
 #' Predict the labels for testing data.
 #'
-#' The testing dataset is rescale to the samQLe range, and expanded by the samQLe spline basis funcions as the training data.
+#' The testing dataset is rescale to the samQLe range, and expanded by the samQLe spline basis functions as the training data.
 #'
 #' @param object An object with S3 class \code{"samQL"}.
 #' @param newdata The testing dataset represented in a \code{n} by \code{d} matrix, where \code{n} is testing sample size and \code{d} is dimension.

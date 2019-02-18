@@ -53,7 +53,7 @@ install_github("HMJiangGatech/sam")
 library(SAM)
 ```
 
-*Windows User:*  If you enconter a Rtools version issue: 1. make sure you install the latest [Rtools](https://cran.r-project.org/bin/windows/Rtools/); 2. try the following code
+*Windows User:*  If you encounter a Rtools version issue: 1. make sure you install the latest [Rtools](https://cran.r-project.org/bin/windows/Rtools/); 2. try the following code
 ```R
 assignInNamespace("version_info", c(devtools:::version_info, list("3.5" = list(version_min = "3.3.0", version_max = "99.99.99", path = "bin"))), "devtools")
 ```
@@ -213,8 +213,3 @@ We compared our results on linear regression and logistic regression with other 
 [2] [Pradeep Ravikumar, John Lafferty, Han Liu, Larry Wasserman, Pradeep, et al. Sparse additive models, 2009](https://rss.onlinelibrary.wiley.com/doi/epdf/10.1111/j.1467-9868.2009.00718.x)  
 [3] [Xingguo Li, Jason Ge, Haoming Jiang, Mingyi Hong, Mengdi Wang, and Tuo Zhao, Boosting Pathwise Coordiante Optimization: Sequential Screening and Proximal Subsampled Newton Subroutine, 2016](https://www2.isye.gatech.edu/~tzhao80/)
 
-
-## TODO List
-- [ ] Use Rcpp fasion
-- [ ] Use RcppEigen
-- [ ] Solve the problems of installation on  machines without openmp

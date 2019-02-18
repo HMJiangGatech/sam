@@ -13,7 +13,7 @@ samQL(X, y, p = 3, lambda = NULL, nlambda = NULL,
 
 \item{y}{The \code{n}-dimensional response vector of the training set, where \code{n} is sample size.}
 
-\item{p}{The number of baisis spline functions. The default value is 3.}
+\item{p}{The number of basis spline functions. The default value is 3.}
 
 \item{lambda}{A user supplied lambda sequence. Typical usage is to have the program compute its own lambda sequence based on nlambda and lambda.min.ratio. Supplying a value of lambda overrides this. WARNING: use with care. Do not supply a single value for lambda. Supply instead a decreasing sequence of lambda values. samQL relies on its warms starts for speed, and its often faster to fit a whole path than compute a single fit.}
 
@@ -29,7 +29,7 @@ samQL(X, y, p = 3, lambda = NULL, nlambda = NULL,
 }
 \value{
 \item{p}{
-  The number of baisis spline functions used in training.
+  The number of basis spline functions used in training.
 }
 \item{X.min}{
   A vector with each entry corresponding to the minimum of each input variable. (Used for rescaling in testing)
@@ -56,7 +56,7 @@ samQL(X, y, p = 3, lambda = NULL, nlambda = NULL,
   The \code{2} by \code{d} matrix. Each column contains the boundary points applied to the corresponding variable.
 }
 \item{func_norm}{
-  The functional norm matrix (\code{d} by length of \code{lambda}) with each column corresponds to a regularization parameter. Since we have \code{d} input variabls, the length of each column is \code{d}.
+  The functional norm matrix (\code{d} by length of \code{lambda}) with each column corresponds to a regularization parameter. Since we have \code{d} input variables, the length of each column is \code{d}.
 }
 \item{sse}{
   Sums of square errors of the solution path.

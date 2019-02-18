@@ -26,7 +26,7 @@
 Predict the labels for testing data.
 }
 \details{
-The testing dataset is rescale to the samHLe range, and expanded by the samHLe spline basis funcions as the training data.
+The testing dataset is rescale to the samHLe range, and expanded by the samHLe spline basis functions as the training data.
 }
 \seealso{
 \code{\link{samHL}}

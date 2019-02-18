@@ -2,7 +2,7 @@ Package: SAM
 Type: Package
 Title: Sparse Additive Modelling
 Version: 1.1.0
-Date: 2014-02-11
+Date: 2019-02-18
 Author: Haoming Jiang, Yukun Ma, Xinyu Fei, Tuo Zhao, Xingguo Li, Han Liu, and Kathryn Roeder
 Maintainer: Haoming Jiang <jianghm.ustc@gmail.com>
 Depends: R (>= 2.14), splines
@@ -16,11 +16,11 @@ Description: The package SAM targets at high dimensional predictive
         computation is further accelerated by warm-start and active-set
         tricks.
 License: GPL-2
-Packaged: 2014-02-12 07:41:52 UTC; tourzhao
+Packaged: 2019-02-18; jianghm.ustc
 Repository: CRAN
 Date/Publication: 2014-02-12 09:34:38
 NeedsCompilation: yes
-RoxygenNote: 6.1.1
+RoxygenNote: 6.1.0
 LinkingTo: 
     Rcpp,
     RcppEigen
