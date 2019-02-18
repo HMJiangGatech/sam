@@ -1,4 +1,4 @@
-#include "solver_params.hpp"
+#include "solver_params.h"
 
 namespace SAM {
   // training parameters

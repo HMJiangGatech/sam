@@ -17,7 +17,7 @@
 }
 \value{
 \item{probs}{
-  Estimated Posterior Probability for Prediction also represented in a \code{n} by the length of \code{lambda} matrix, where \code{n} is testing sample size. 
+  Estimated Posterior Probability for Prediction also represented in a \code{n} by the length of \code{lambda} matrix, where \code{n} is testing sample size.
 }
 \item{labels}{
   Predicted labels also represented in a \code{n} by the length of \code{lambda} matrix, where \code{n} is testing sample size. }

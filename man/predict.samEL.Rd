@@ -15,7 +15,7 @@
 }
 \value{
 \item{expectations}{
-    Estimated expected counts also represented in a \code{n} by the length of \code{lambda} matrix, where \code{n} is testing sample size. 
+    Estimated expected counts also represented in a \code{n} by the length of \code{lambda} matrix, where \code{n} is testing sample size.
   }
 }
 \description{

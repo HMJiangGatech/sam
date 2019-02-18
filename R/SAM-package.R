@@ -1,5 +1,8 @@
 #' @useDynLib SAM, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
+#' @importFrom splines ns
+#' @importFrom stats median
+#' @importFrom graphics matplot
 NULL
 
 

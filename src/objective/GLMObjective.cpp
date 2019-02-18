@@ -1,10 +1,14 @@
-#include "GLMObjective.hpp"
-#include "../utils.hpp"
+#include "GLMObjective.h"
+#include "../utils.h"
 #include <stdio.h>
 #include <iostream>
-#include "../eigen3/Eigen/Eigenvalues"
+#include <Rcpp.h>
+#include <RcppEigen.h>
 #include <complex>
 #include <algorithm>
+
+//[[Rcpp::depends(RcppEigen)]]
+//[[Rcpp::plugins(openmp)]
 
 namespace SAM {
   const double eps = 1e-4;

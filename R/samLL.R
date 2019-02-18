@@ -78,6 +78,7 @@
 #'
 #' ## predicting response
 #' out.tst = predict(out.trn,Xt)
+#' @useDynLib SAM grpLR
 #' @export
 samLL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 0.1, thol=1e-5, max.ite = 1e5, regfunc="L1"){
 

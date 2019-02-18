@@ -1,5 +1,5 @@
 #include <cassert>
-#include "LinearObjective.hpp"
+#include "LinearObjective.h"
 #include <iostream>
 
 namespace SAM {

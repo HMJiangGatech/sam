@@ -1,11 +1,14 @@
-#include "../eigen3/Eigen/Dense"
-#include "actnewton.hpp"
-#include "../objective/objective.hpp"
-#include "../solver/solver_params.hpp"
-#include "../utils.hpp"
+#include <Rcpp.h>
+#include <RcppEigen.h>
+#include "actnewton.h"
+#include "../objective/objective.h"
+#include "solver_params.h"
+#include "../utils.h"
 #include <iostream>
 #include <algorithm>
 #include <stdio.h>
+//[[Rcpp::depends(RcppEigen)]]
+//[[Rcpp::plugins(openmp)]
 
 namespace SAM {
   ActNewtonSolver::ActNewtonSolver(ObjFunction *obj, SolverParams param)

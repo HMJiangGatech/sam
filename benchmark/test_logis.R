@@ -1,10 +1,10 @@
 set.seed(19970224)
-nt = 100
-n = 100
-d = 200
+nt = 10000
+n = 10000
+d = 2000
 p = 3
 m = d * p
-t = 1
+t = 3
 
 library(splines)
 
@@ -48,36 +48,9 @@ for (i in 1:d) {
   index <- c(index, rep(i, p))
 }
 
-# SAM
-
-library(SAM)
-
-total_t = 0
-total_l = 0
-nlamb = 20
-for (i in 1:t) {
-  t0 = proc.time()
-  out.trn = samLL(X, y, nlambda=nlamb)
-  total_t = total_t + proc.time() - t0
-  out.tst = predict(out.trn, Xt)
-  total_l = total_l + mean(out.tst$labels[,nlamb]==yt)
-}
-print("sam log-reg:")
-print(total_t / t - genZ_t)
-print(total_l / t)
-
-total_t = 0
-total_l = 0
-nlamb = 20
-for (i in 1:t) {
-  t0 = proc.time()
-  out.trn = samLL(X, y, nlambda=nlamb, regfunc="MCP")
-  total_t = total_t + proc.time() - t0
-  out.tst = predict(out.trn, Xt)
-  total_l = total_l + mean(out.tst$labels[,nlamb]==yt)
-}
-print("sam log-reg with MCP:")
-print(total_t / t - genZ_t)
-print(total_l / t)
+source("tests/testthat/logis_sam.R")
+#source("tests/testthat/logis_gglasso.R")
+source("tests/testthat/logis_grplasso.R")
+source("tests/testthat/logis_grpreg.R")
 
 

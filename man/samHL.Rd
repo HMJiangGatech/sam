@@ -28,7 +28,7 @@ samHL(X, y, p = 3, lambda = NULL, nlambda = NULL,
 }
 \value{
 \item{p}{
-  The number of baisis spline functions used in training.  
+  The number of baisis spline functions used in training.
 }
 \item{X.min}{
   A vector with each entry corresponding to the minimum of each input variable. (Used for rescaling in testing)
@@ -70,7 +70,7 @@ X = 0.5*matrix(runif(n*d),n,d) + matrix(rep(0.5*runif(n),d),n,d)
 y = sign(((X[,1]-0.5)^2 + (X[,2]-0.5)^2)-0.06)
 
 ## flipping about 5 percent of y
-y = y*sign(runif(n)-0.05) 
+y = y*sign(runif(n)-0.05)
 
 ## Training
 out.trn = samHL(X,y)
@@ -86,7 +86,7 @@ Xt = 0.5*matrix(runif(nt*d),nt,d) + matrix(rep(0.5*runif(nt),d),nt,d)
 yt = sign(((Xt[,1]-0.5)^2 + (Xt[,2]-0.5)^2)-0.06)
 
 ## flipping about 5 percent of y
-yt = yt*sign(runif(nt)-0.05) 
+yt = yt*sign(runif(nt)-0.05)
 
 ## predicting response
 out.tst = predict(out.trn,Xt)

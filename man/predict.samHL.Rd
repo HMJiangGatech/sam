@@ -17,7 +17,7 @@
 }
 \value{
 \item{values}{
-  Predicted decision values also represented in a \code{n} by the length of \code{lambda} matrix, where \code{n} is testing sample size. 
+  Predicted decision values also represented in a \code{n} by the length of \code{lambda} matrix, where \code{n} is testing sample size.
 }
 \item{labels}{
   Predicted labels also represented in a \code{n} by the length of \code{lambda} matrix, where \code{n} is testing sample size. }

@@ -76,6 +76,7 @@
 #'
 #' ## predicting response
 #' out.tst = predict(out.trn,Xt)
+#' @useDynLib SAM grpSVM
 #' @export
 samHL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 0.4, thol=1e-5, mu = 5e-2, max.ite = 1e5){
 

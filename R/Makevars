@@ -1,8 +1,0 @@
-CC = clang-omp
-CXX = clang-omp++
-CXX98 = clang-omp++
-CXX11 = clang-omp++
-CXX14 = clang-omp++
-CXX17 = clang-omp++
-OBJC = clang-omp
-OBJCXX = clang-omp++

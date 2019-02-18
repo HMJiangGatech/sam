@@ -29,7 +29,7 @@ samEL(X, y, p = 3, lambda = NULL, nlambda = NULL,
 }
 \value{
 \item{p}{
-  The number of baisis spline functions used in training.  
+  The number of baisis spline functions used in training.
 }
 \item{X.min}{
   A vector with each entry corresponding to the minimum of each input variable. (Used for rescaling in testing)

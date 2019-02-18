@@ -1,4 +1,4 @@
-#include "utils.hpp"
+#include "utils.h"
 
 namespace SAM {
   double calc_norm(const VectorXd &x) {
