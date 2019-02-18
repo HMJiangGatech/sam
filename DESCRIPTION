@@ -6,19 +6,16 @@ Date: 2019-02-18
 Author: Haoming Jiang, Yukun Ma, Xinyu Fei, Tuo Zhao, Xingguo Li, Han Liu, and Kathryn Roeder
 Maintainer: Haoming Jiang <jianghm.ustc@gmail.com>
 Depends: R (>= 2.14), splines
-Description: The package SAM targets at high dimensional predictive
-        modeling (regression and classification) for complex data
-        analysis. SAM is short for sparse additive modeling, and adopts
-        the computationally efficient basis spline technique. We solve
-        the optimization problems by various computational algorithms
-        including the block coordinate descent algorithm, fast
-        iterative soft-thresholding algorithm, and newton method. The
-        computation is further accelerated by warm-start and active-set
-        tricks.
+Description: Computationally efficient tools for high dimensional predictive
+        modeling (regression and classification). SAM is short for sparse 
+        additive modeling, and adopts the computationally efficient basis 
+        spline technique. We solve  the optimization problems by various 
+        computational algorithms including the block coordinate descent 
+        algorithm, fast iterative soft-thresholding algorithm, and newton method. 
+        The computation is further accelerated by warm-start and active-set tricks.
 License: GPL-2
-Packaged: 2019-02-18; jianghm.ustc
+Packaged: 2019-02-18 9:30:00 UTC; Haoming
 Repository: CRAN
-Date/Publication: 2014-02-12 09:34:38
 NeedsCompilation: yes
 RoxygenNote: 6.1.0
 LinkingTo: 
