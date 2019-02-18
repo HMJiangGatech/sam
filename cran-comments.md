@@ -14,6 +14,8 @@ One NOTE under ubuntu environment:
     sub-directories of 1Mb or more:
       libs  22.4Mb
 ```
+It seems that on LINUX architectures, the CHECK returns one NOTE because the libs subdirectory is then above the 1MB threshold. However, it seems that this NOTE only appears under LINUX, but not under Windows or OSX. My understanding is that this inflation of the libs subdirectory is due to the use of Rcpp.
+
 
 ## Downstream dependencies
 All dependecies have been check with 0 errors | 0 warnings | 0 notes
