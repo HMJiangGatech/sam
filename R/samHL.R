@@ -18,6 +18,7 @@
 #' @param thol Stopping precision. The default value is 1e-5.
 #' @param mu Smoothing parameter used in approximate the Hinge Loss. The default value is 0.05.
 #' @param max.ite The number of maximum iterations. The default value is 1e5.
+#' @param w The \code{n}-dimensional positive vector. It is the weight of each entry in the weighted loss. The default value is 1 for all entries.
 #' @return
 #' \item{p}{
 #'   The number of basis spline functions used in training.
@@ -78,7 +79,7 @@
 #' out.tst = predict(out.trn,Xt)
 #' @useDynLib SAM grpSVM
 #' @export
-samHL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 0.4, thol=1e-5, mu = 5e-2, max.ite = 1e5){
+samHL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 0.4, thol=1e-5, mu = 5e-2, max.ite = 1e5, w = NULL){
 
   gcinfo(FALSE)
   fit = list()
@@ -93,6 +94,10 @@ samHL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 0.
   n = nrow(X)
   d = ncol(X)
   m = d*p
+  
+  if(is.null(w)){
+    w = rep(1,n)
+  }
 
   np = sum(y==1)
   nn = sum(y==-1)
@@ -143,7 +148,7 @@ samHL = function(X, y, p=3, lambda = NULL, nlambda = NULL, lambda.min.ratio = 0.
 
   L0 = norm(Z,'f')^2/mu
 
-  out = .C("grpSVM", Z = as.double(Z), lambda = as.double(lambda), nnlambda = as.integer(nlambda), LL0 = as.double(L0), nn = as.integer(n), dd = as.integer(d), pp = as.integer(p),aa0 = as.double(a0), xx = as.double(matrix(0,m+1,nlambda)), mmu = as.double(mu), mmax_ite = as.integer(max.ite), tthol = as.double(thol),aalpha = as.double(0.5),df=as.double(rep(0,nlambda)),func_norm=as.double(matrix(0,d,nlambda)),package="SAM")
+  out = .C("grpSVM", Z = as.double(Z), w = as.double(w), lambda = as.double(lambda), nnlambda = as.integer(nlambda), LL0 = as.double(L0), nn = as.integer(n), dd = as.integer(d), pp = as.integer(p),aa0 = as.double(a0), xx = as.double(matrix(0,m+1,nlambda)), mmu = as.double(mu), mmax_ite = as.integer(max.ite), tthol = as.double(thol),aalpha = as.double(0.5),df=as.double(rep(0,nlambda)),func_norm=as.double(matrix(0,d,nlambda)),package="SAM")
 
   fit$lambda = out$lambda
   fit$w = matrix(out$xx,ncol=nlambda)
