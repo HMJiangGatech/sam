@@ -23,19 +23,16 @@ using namespace SAM;
 
 extern "C" void grplasso(double *yy, double *XX, double *lambda, int *nnlambda, int *nn, int *dd, int *pp, double *ww, int *mmax_ite, double *tthol, char** regfunc, int *iinput, int *df, double *sse, double *func_norm)
 {
-  int counter,n,d,p,m,max_ite,nlambda;
-  int ite_ext,ite_int;
-  int s;
+  int n,d,p,max_ite,nlambda;
   int input;
 
-  double ilambda,thol;
+  double thol;
   double lambda_max;
 
   nlambda = *nnlambda;
   n = *nn;
   d = *dd;
   p = *pp;
-  m = d*p;
   max_ite = *mmax_ite;
   thol = *tthol;
   input = *iinput;

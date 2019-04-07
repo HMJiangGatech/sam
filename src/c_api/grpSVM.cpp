@@ -131,8 +131,7 @@ extern "C" void grpSVM(double *Z, double *lambda, int *nnlambda, double *LL0, in
     L0 = *LL0;
     alpha = *aalpha;
     
-    int ite_ext,ite_int;
-    int counter,i,j,k,s,g_idx,b_idx,lambda_idx0,lambda_idx1;
+    int counter,i,j,k,g_idx,lambda_idx0,lambda_idx1;
     
     double gap,gap_x,gap_y,tmp_x,gap_xx,gap_yy;
     int iter,tracking;

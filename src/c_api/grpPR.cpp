@@ -19,7 +19,7 @@ using namespace SAM;
 
 extern "C" void grpPR(double *A, double* yy, double *lambda, int *nnlambda, double *LL0, int *nn, int *dd, int *pp, double *xx, double *aa0, int *mmax_ite, double *tthol, char** regfunc, double *aalpha, double *z, int *df, double *func_norm) {
 
-  double thol = *tthol, alpha = *aalpha, L0 = *LL0;
+  double thol = *tthol, L0 = *LL0;
   int nlambda = *nnlambda, n = *nn, d = *dd, p = *pp, max_ite = *mmax_ite;
 
   vector<MatrixXd> V(d);
