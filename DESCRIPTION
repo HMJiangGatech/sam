@@ -1,7 +1,7 @@
 Package: SAM
 Type: Package
 Title: Sparse Additive Modelling
-Version: 1.1.1
+Version: 1.1.2
 Date: 2019-02-18
 Author: Haoming Jiang, Yukun Ma, Xinyu Fei, Tuo Zhao, Xingguo Li, Han Liu, and Kathryn Roeder
 Maintainer: Haoming Jiang <jianghm.ustc@gmail.com>

@@ -58,9 +58,9 @@ library(SAM)
 assignInNamespace("version_info", c(devtools:::version_info, list("3.5" = list(version_min = "3.3.0", version_max = "99.99.99", path = "bin"))), "devtools")
 ```
 
-### Installing from CRAN (not up to date yet)
+### Installing from CRAN
 
-Ideally you can just install and enable SAM using with the help of CRAN on an R console, but we haven't uploaded the updated package to CRAN yet, so this method is not available so far.
+Ideally you can just install and enable SAM using with the help of CRAN on an R console.
 
 ```
 install.packages("SAM")
