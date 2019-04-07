@@ -2,7 +2,6 @@ Package: SAM
 Type: Package
 Title: Sparse Additive Modelling
 Version: 1.1.2
-Date: 2019-02-18
 Author: Haoming Jiang, Yukun Ma, Han Liu, Kathryn Roeder, Xingguo Li, and Tuo Zhao
 Maintainer: Haoming Jiang <jianghm.ustc@gmail.com>
 Depends: R (>= 2.14), splines
@@ -14,7 +13,6 @@ Description: Computationally efficient tools for high dimensional predictive
         algorithm, fast iterative soft-thresholding algorithm, and newton method. 
         The computation is further accelerated by warm-start and active-set tricks.
 License: GPL-2
-Packaged: 2019-02-18 9:30:00 UTC; Haoming
 Repository: CRAN
 NeedsCompilation: yes
 RoxygenNote: 6.1.0
