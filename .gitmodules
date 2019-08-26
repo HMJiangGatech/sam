@@ -1,0 +1,6 @@
+[submodule "src/eigen3"]
+	path = src/eigen3
+	url = git@github.com:eigenteam/eigen-git-mirror.git
+[submodule "src/backend"]
+	path = src/backend
+	url = git@github.com:mayukuner/SAM-Backend.git

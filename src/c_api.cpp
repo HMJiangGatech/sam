@@ -1,11 +1,11 @@
-#include "c_api/grplasso.cpp"
-#include "c_api/grpSVM.cpp"
-#include "c_api/grpLR.cpp"
-#include "c_api/grpPR.cpp"
 #include <R.h>
 #include <Rinternals.h>
 #include <stdlib.h> // for NULL
 #include <R_ext/Rdynload.h>
+#include "backend/c_api/grplasso.cpp"
+#include "backend/c_api/grpSVM.cpp"
+#include "backend/c_api/grpLR.cpp"
+#include "backend/c_api/grpPR.cpp"
 
 
 static R_NativePrimitiveArgType grplasso_t[] = {

@@ -1,7 +1,7 @@
 // objective
-#include "objective/GLMObjective.cpp"
-#include "objective/LinearObjective.cpp"
+#include "backend/objective/GLMObjective.cpp"
+#include "backend/objective/LinearObjective.cpp"
 
 // solver
-#include "solver/actnewton.cpp"
-#include "solver/solver_params.cpp"
+#include "backend/solver/actnewton.cpp"
+#include "backend/solver/solver_params.cpp"
