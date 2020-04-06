@@ -1,7 +1,7 @@
 Package: SAM
 Type: Package
 Title: Sparse Additive Modelling
-Version: 1.1.2
+Version: 1.1.3
 Author: Haoming Jiang, Yukun Ma, Han Liu, Kathryn Roeder, Xingguo Li, and Tuo Zhao
 Maintainer: Haoming Jiang <jianghm.ustc@gmail.com>
 Depends: R (>= 2.14), splines
