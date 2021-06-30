@@ -4,9 +4,18 @@
 \alias{samHL}
 \title{Training function of Sparse Additive Machine}
 \usage{
-samHL(X, y, p = 3, lambda = NULL, nlambda = NULL,
-  lambda.min.ratio = 0.4, thol = 1e-05, mu = 0.05, max.ite = 1e+05,
-  w = NULL)
+samHL(
+  X,
+  y,
+  p = 3,
+  lambda = NULL,
+  nlambda = NULL,
+  lambda.min.ratio = 0.4,
+  thol = 1e-05,
+  mu = 0.05,
+  max.ite = 1e+05,
+  w = NULL
+)
 }
 \arguments{
 \item{X}{The \code{n} by \code{d} design matrix of the training set, where \code{n} is sample size and \code{d} is dimension.}
@@ -27,7 +36,7 @@ samHL(X, y, p = 3, lambda = NULL, nlambda = NULL,
 
 \item{max.ite}{The number of maximum iterations. The default value is 1e5.}
 
-\item{w}{The \code{n}-dimensional vector. It is the weight of each entry in the weighted loss. The default value is 1 for all entries.}
+\item{w}{The \code{n}-dimensional positive vector. It is the weight of each entry in the weighted loss. The default value is 1 for all entries.}
 }
 \value{
 \item{p}{
