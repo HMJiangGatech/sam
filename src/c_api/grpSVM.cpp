@@ -136,8 +136,6 @@ extern "C" void grpSVM(double *Z, double *w, double *lambda, int *nnlambda, doub
     
     double gap,gap_x,gap_y,tmp_x,gap_xx,gap_yy;
     int iter,tracking;
-    //int gap_ext,change_ext;
-    //double gap_int;
     
     int *xa_idx,*ya_idx,*ua_idx;
     xa_idx = (int *) malloc(d*sizeof(int));
@@ -175,39 +173,18 @@ extern "C" void grpSVM(double *Z, double *w, double *lambda, int *nnlambda, doub
         }
     
         ilambda = lambda[counter];
-
-        
-        //printf("%f\n",ilambda);
     
         t1 = 1;
     
         get_residual(r,Z,y1,ya_idx,&n,&d,&p,&m); 
         
-    
-        //for(i=0;i<n;i++)
-        //    printf("%f\n",r[i]);
-        //printf("\n");
-    
-    
         get_dual(u,r,ua_idx,&mu,&n);
         
-        //for(i=0;i<n;i++)
-        //    printf("%f\n",u[i]);
-        //printf("\n");
-    
-    
         get_grad_SVM(g,Z,w,u,ua_idx,&m,&n);
-    
-        //for(j=0;j<(m+1);j++)
-        //    printf("%f\n",g[j]);
-        //printf("\n");
-    
     
         L = L0;
     
         get_base_SVM(&H0,w,u,r,ua_idx,&mu,&n);
-    
-        //printf("%f\n",H0);
     
         tracking = 1;
     
@@ -225,27 +202,13 @@ extern "C" void grpSVM(double *Z, double *w, double *lambda, int *nnlambda, doub
                     xa_idx[j] = 0;
             }
         
-            //for(j=0;j<(m+1);j++)
-            //    printf("%f\n",x1[j]);
-            //printf("\n");
-        
-            //for(j=0;j<d;j++)
-            //    printf("%d,",xa_idx[j]);
-            //printf("\n");
-        
-        
             Q = H0;
             for(j=0;j<(m+1);j++){
                 Q = Q + g[j]*(x1[j]-y1[j]) + L*pow(x1[j]-y1[j],2)/2;
             }
         
-            //printf("%f\n",Q);
         
             get_residual(r,Z,x1,xa_idx,&n,&d,&p,&m);
-        
-            //for(i=0;i<n;i++)
-            //    printf("%f\n",r[i]);
-            //printf("\n");
         
             get_dual(u,r,ua_idx,&mu,&n);
         
@@ -255,7 +218,6 @@ extern "C" void grpSVM(double *Z, double *w, double *lambda, int *nnlambda, doub
                     H = H + (u[i]*r[i] - mu*pow(u[i],2)/2)*w[i];
             }
         
-            //printf("%f\n",H);
         
             if(Q>=H)
                 L = L*alpha;
@@ -264,12 +226,6 @@ extern "C" void grpSVM(double *Z, double *w, double *lambda, int *nnlambda, doub
                 tracking = 0;
             }
         }
-    
-        //if(iter == 1){
-    
-        //    printf("%f\n",Q);
-        //    printf("%f\n",H);}
-        //
     
         ilambda0 = ilambda/L;
         for(j=0;j<(m+1);j++)
@@ -285,16 +241,9 @@ extern "C" void grpSVM(double *Z, double *w, double *lambda, int *nnlambda, doub
                 xa_idx[j] = 0;
         }
     
-        //for(j=0;j<(m+1);j++)
-        //    printf("%f\n",x1[j]);
-        //printf("\n");
-    
-    
         t2 = (1+sqrt(1+4*pow(t1,2)))/2;
-        //printf("%f\n",t2);
         tmp = (t1-1)/t2;
-        //printf("%f\n",tmp);
-    
+        
         for(j=0;j<d;j++){
             g_idx = j*p;
             for(k=0;k<p;k++)
@@ -329,33 +278,12 @@ extern "C" void grpSVM(double *Z, double *w, double *lambda, int *nnlambda, doub
         else
             gap = gap_y;
      
-        //printf("%f\n",gap);
-        
-        //for(j=0;j<(m+1);j++)
-        //    printf("%f\n",y2[j]-x1[j]);
-        //printf("\n");
-    
-    
-        //for(j=0;j<(m+1);j++)
-        //    printf("%f\n",y2[j]);
-        //printf("\n");
-    
-    
         for(j=0;j<(m+1);j++)
             x0[j] = x1[j];
     
         get_residual(r,Z,x0,xa_idx,&n,&d,&p,&m);
     
-        //for(i=0;i<n;i++)
-        //    printf("%f\n",r[i]);
-        //printf("\n");
-    
         get_dual(u,r,ua_idx,&mu,&n);
-    
-        //for(i=0;i<n;i++)
-        //    printf("%f\n",u[i]);
-        //printf("\n");
-    
     
         Hx0 = ilambda*reg_norm;
         for(i=0;i<n;i++){
@@ -363,14 +291,8 @@ extern "C" void grpSVM(double *Z, double *w, double *lambda, int *nnlambda, doub
                 Hx0 = Hx0 + (u[i]*r[i] - mu*pow(u[i],2)/2)*w[i];
         }
     
-        //printf("%f\n",Hx0);
-    
         for(j=0;j<(m+1);j++)
             y1[j] = y2[j];
-    
-        //for(j=0;j<(m+1);j++)
-        //    printf("%f\n",y1[j]-x1[j]);
-        //printf("\n");
     
         t1 = t2;
     
@@ -381,18 +303,8 @@ extern "C" void grpSVM(double *Z, double *w, double *lambda, int *nnlambda, doub
         
             get_residual(r,Z,y1,ya_idx,&n,&d,&p,&m);
         
-            //for(i=0;i<n;i++)
-            //    printf("%f\n",r[i]);
-            //printf("\n");
-        
-        
             get_dual(u,r,ua_idx,&mu,&n);
             
-            //for(i=0;i<n;i++)
-            //    printf("%f\n",u[i]);
-            //printf("\n");
-        
-        
             get_grad_SVM(g,Z,w,u,ua_idx,&m,&n);
         
             get_base_SVM(&H0,w,u,r,ua_idx,&mu,&n);
@@ -417,28 +329,13 @@ extern "C" void grpSVM(double *Z, double *w, double *lambda, int *nnlambda, doub
                             xa_idx[j] = 0;
                     }
             
-                    //for(j=0;j<(m+1);j++)
-                    //    printf("%f\n",x1[j]);
-                    //printf("\n");
-            
-                    //for(j=0;j<d;j++)
-                    //    printf("%d,",xa_idx[j]);
-                    //printf("\n");
-            
-            
                     Q = H0;
                     for(j=0;j<(m+1);j++){
                         Q = Q + g[j]*(x1[j]-y1[j]) + L*pow(x1[j]-y1[j],2)/2;
                     }
             
-                    //printf("%f\n",Q);
             
                     get_residual(r,Z,x1,xa_idx,&n,&d,&p,&m);
-                    
-                    //for(i=0;i<n;i++)
-                    //    printf("%f\n",r[i]);
-                    //printf("\n");
-                    
                     
                     get_dual(u,r,ua_idx,&mu,&n);
                                 
@@ -471,16 +368,8 @@ extern "C" void grpSVM(double *Z, double *w, double *lambda, int *nnlambda, doub
             
                 get_residual(r,Z,x1,xa_idx,&n,&d,&p,&m);
                 
-                //for(i=0;i<n;i++)
-                //    printf("%f\n",r[i]);
-                //printf("\n");
-                
                 
                 get_dual(u,r,ua_idx,&mu,&n);
-                
-                //for(i=0;i<n;i++)
-                //    printf("%f\n",u[i]);
-                //printf("\n");
                 
                 H = 0;
                 for(i=0;i<n;i++){
@@ -489,13 +378,7 @@ extern "C" void grpSVM(double *Z, double *w, double *lambda, int *nnlambda, doub
                 }
             }
         
-            //printf("%f\n",Q);
-            //printf("%f\n",H);
-        
-        
             Hx1 = H + ilambda*reg_norm;
-        
-            //printf("%f\n",Hx1);
         
             t2 = (1+sqrt(1+4*pow(t1,2)))/2;
             tmp = (t1-1)/t2;
@@ -535,8 +418,6 @@ extern "C" void grpSVM(double *Z, double *w, double *lambda, int *nnlambda, doub
                 else
                     gap = gap_x;
         
-                //printf("%f\n",gap_x);
-                //printf("%f\n",gap_y);
             }
             else{
                 gap = 0;
@@ -555,31 +436,13 @@ extern "C" void grpSVM(double *Z, double *w, double *lambda, int *nnlambda, doub
                             ya_idx[j] = 0;
                 }
                 gap = sqrt(gap/gap_yy);
-                //printf("%f\n",gap);
             }
         
             t1 = t2;
         
-            //printf("%f\n",gap);
-        
-            //if(iter<10)
-			//{
-            //  printf("%f\n",Hx0);
-            //}
-        
-       
-            //for(j=0;j<(m+1);j++)
-            //  printf("%f\n",x0[j]);
-            //printf("\n");
-        
-            //for(j=0;j<(m+1);j++)
-            //    printf("%f\n",y1[j]);
-            //printf("\n");
-        
             iter = iter + 1;
         }
-    
-        //printf("%d\n",iter);
+
     
     
         //df[counter] = 0;
@@ -599,30 +462,6 @@ extern "C" void grpSVM(double *Z, double *w, double *lambda, int *nnlambda, doub
             }
         }
         xx[lambda_idx0+m] = x0[m];
-    
-    
-        //printf("%d\n",iter);
-    
-        /*
-        for(j=0;j<(m+1);j++)
-            printf("%f\n",x0[j]);
-        printf("\n");
-    
-        for(j=0;j<(m+1);j++)
-            printf("%f\n",y1[j]);
-        printf("\n");
-    
-        for(j=0;j<d;j++)
-            printf("%d\n",xa_idx[j]);
-    
-        printf("\n");
-        for(j=0;j<d;j++)
-            printf("%d\n",ya_idx[j]);
-    
-        printf("\n");
-    
-        printf("%f\n",gap);
-         */
     
     }
     
