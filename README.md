@@ -1,8 +1,6 @@
 <h1 align="center">SAM</h1>
 
-[![](https://cranlogs.r-pkg.org/badges/SAM)](https://cran.r-project.org/package=SAM)
-
-[![](https://cranlogs.r-pkg.org/badges/grand-total/SAM)](https://cran.r-project.org/package=SAM)
+[![](https://cranlogs.r-pkg.org/badges/SAM)](https://cran.r-project.org/package=SAM) [![](https://cranlogs.r-pkg.org/badges/grand-total/SAM)](https://cran.r-project.org/package=SAM)
 
 <h4 align="center">R Package for Sparse Additive Modelling</h4>
 
